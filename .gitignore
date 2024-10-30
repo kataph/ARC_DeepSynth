@@ -1,0 +1,18 @@
+# Python files
+__pycache__
+**/__pycache__
+
+# Produced figures
+*.png
+
+# Produced outputs
+*.csv
+
+# VS Code
+.vscode
+.VSCodeCounter
+
+# dataset folders
+deepcoder_dataset/
+flashfill_dataset/
+list_dataset/
