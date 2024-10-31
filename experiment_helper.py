@@ -12,14 +12,20 @@ def make_program_checker(dsl: DSL, examples) -> Callable[[Program, bool], bool]:
         if use_cached_evaluator:
             for i, example in enumerate(examples):
                 input, output = example
-                out = prog.eval(dsl, input, i)
+                try: #TODO: FC: alas it fails sometimes
+                    out = prog.eval(dsl, input, i)
+                except:
+                    out = None
                 if output != out:
                     return False
             return True
         else:
             for example in examples:
                 input, output = example
-                out = prog.eval_naive(dsl, input)
+                try:
+                    out = prog.eval_naive(dsl, input)
+                except:
+                    out = None
                 if output != out:
                     return False
             return True

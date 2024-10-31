@@ -11,15 +11,24 @@ t3 = PolymorphicType('t3')
 t4 = PolymorphicType('t4')
 #a0 = ExceedinglyPolymorphicType('a0') # TODO: for now it is not used
 z0 = PolymorphicTypeOrPrimitiveArrow('z0')
+n0 = PolymorphicTypeNoArrow('n0')
+n1 = PolymorphicTypeNoArrow('n1')
+n2 = PolymorphicTypeNoArrow('n2')
+n3 = PolymorphicTypeNoArrow('n3')
 
 # def identity(
 #     x: Any #TODO: I chekced nad identity seems used only for non-arrows.
 # ) -> Any:
 #     """ identity function """
 #     return x
+# def identity(
+#     x: t0 #TODO: I chekced nad identity seems used only for non-arrows.
+# ) -> t0:
+#     """ identity function """
+#     return x
 def identity(
-    x: t0 #TODO: I chekced nad identity seems used only for non-arrows.
-) -> t0:
+    x: n0 #TODO: I chekced nad identity seems used only for non-arrows.
+) -> n0:
     """ identity function """
     return x
 
@@ -120,9 +129,15 @@ def flip(
 # ) -> Boolean:
 #     """ equality """
 #     return a == b
+# def equality( #TODO Like identity perhaps...
+#     a: t0,
+#     b: t0
+# ) -> Boolean:
+#     """ equality """
+#     return a == b
 def equality( #TODO Like identity perhaps...
-    a: t0,
-    b: t0
+    a: n0,
+    b: n0
 ) -> Boolean:
     """ equality """
     return a == b
@@ -201,9 +216,19 @@ def difference(
 # ) -> Tuple:
 #     """ remove duplicates """
 #     return tuple(e for i, e in enumerate(tup) if tup.index(e) == i)
-def dedupe( # TODO: consider t0 in {Tuple[INT], INT}, cause that is where dedupe is used
-    tup: Tuple[t0]
-) -> Tuple[t0]:
+# def dedupe( # TODO: consider t0 in {Tuple[INT], INT}, cause that is where dedupe is used
+#     tup: Tuple[t0]
+# ) -> Tuple[t0]:
+#     """ remove duplicates """
+#     return tuple(e for i, e in enumerate(tup) if tup.index(e) == i)
+def dedupe_ti(
+    tup: Tuple[Tuple[Integer]]
+) -> Tuple[Tuple[Integer]]:
+    """ remove duplicates """
+    return tuple(e for i, e in enumerate(tup) if tup.index(e) == i)
+def dedupe_i(
+    tup: Tuple[Integer]
+) -> Tuple[Integer]:
     """ remove duplicates """
     return tuple(e for i, e in enumerate(tup) if tup.index(e) == i)
 
@@ -278,11 +303,11 @@ def merge_cf(
 ) -> FrozenSet[t0]:
     """ merging """
     return type(containers)(e for c in containers for e in c)
-def merge_ct(
-    containers: Tuple[Tuple[t0]]
-) -> Tuple[t0]:
-    """ merging """
-    return type(containers)(e for c in containers for e in c)
+# def merge_ct(
+#     containers: Tuple[Tuple[t0]]
+# ) -> Tuple[t0]:
+#     """ merging """
+#     return type(containers)(e for c in containers for e in c)
 
 
 def maximum(
@@ -379,16 +404,16 @@ def argmin_ct(
     return min(container, key=compfunc)
 
 
-# def mostcommon(
+# def mostcommon( # TODO: this is an error? Omnly tuple since fset no repetition and no .count?
 #     container: Container
 # ) -> Any:
 #     """ most common item """
 #     return max(set(container), key=container.count)
-def mostcommon_cf(
-    container: FrozenSet[t0]
-) -> t0:
-    """ most common item """
-    return max(set(container), key=container.count)
+# def mostcommon_cf( # I remove because it always errs
+#     container: FrozenSet[t0]
+# ) -> t0:
+#     """ most common item """
+#     return max(set(container), key=container.count)
 def mostcommon_ct(
     container: Tuple[t0]
 ) -> t0:
@@ -531,13 +556,13 @@ def mfilter_cf(
     function: Arrow[FrozenSet[t0],Boolean]
 ) -> FrozenSet[t0]:
     """ filter and merge """
-    return merge_cf(sfilter(container, function))
+    return merge_cf(sfilter_cf(container, function))
 def mfilter_ct(
     container: Tuple[Tuple[t0]],
     function: Arrow[Tuple[t0],Boolean]
 ) -> Tuple[t0]:
     """ filter and merge """
-    return merge_ct(sfilter(container, function))
+    return merge_ct(sfilter_ct(container, function))
 
 
 # def extract(
@@ -651,7 +676,7 @@ def other_cf(
     value: t0
 ) -> t0:
     """ other value in the container """
-    return first(remove(value, container))
+    return first_cf(remove_cf(value, container))
 
 
 def interval(
@@ -721,26 +746,39 @@ def pair( #TODO: hom. assumption
 #     return a if condition else b
 def branch( #error in solutions with branch taking callables and obtaining identities? -> NO ERROR! if condition set identity else do something
     condition: Boolean,
-    a: z0, #TODO For now I put a normal polymorphic type plus primitive arrows
-    b: z0 #I assume homogeneity
-) -> z0:
+    a: t0, # Normal polym. types can become arrows, so no issue there
+    b: t0 #I assume homogeneity
+) -> t0:
     """ if else branching """
     return a if condition else b
 
 
-def compose(
-    outer: Arrow[t0,t1],
-    inner: Arrow[t1,t2]
-) -> Arrow[t0,t2]:
+# def compose( #TODO: maybe put type to no-arrow-poly?
+#     outer: Arrow[t0,t1],
+#     inner: Arrow[t1,t2]
+# ) -> Arrow[t0,t2]:
+#     """ function composition """
+#     return lambda x: outer(inner(x))
+def compose( #TODO: maybe put type to no-arrow-poly?
+    outer: Arrow[n0,n1],
+    inner: Arrow[n1,n2]
+) -> Arrow[n0,n2]:
     """ function composition """
     return lambda x: outer(inner(x))
 
 
-def chain(
-    h: Arrow[t0,t1],
-    g: Arrow[t1,t2],
-    f: Arrow[t2,t3],
-) -> Arrow[t0,t3]:
+# def chain(
+#     h: Arrow[t0,t1],
+#     g: Arrow[t1,t2],
+#     f: Arrow[t2,t3],
+# ) -> Arrow[t0,t3]:
+#     """ function composition with three functions """
+#     return lambda x: h(g(f(x)))
+def chain( # found counterexample ...
+    h: Arrow[n0,n1],
+    g: Arrow[n1,n2],
+    f: Arrow[n2,n3],
+) -> Arrow[n0,n3]:
     """ function composition with three functions """
     return lambda x: h(g(f(x)))
 
@@ -765,30 +803,24 @@ def matcher(
 #         return lambda x, y: function(x, y, fixed)
 #     else:
 #         return lambda x, y, z: function(x, y, z, fixed)
-def rbind_2(
+def rbind_2(  #TODO: put types to no arrows? But found example where function take functions as args
     function: Arrow[t0,Arrow[t1,t2]],
     fixed: t1
 ) -> Arrow[t0,t2]:
     """ fix the rightmost argument """
-    n = function.__code__.co_argcount
-    assert n == 2, "Wrong argument count"
-    return lambda x: function(x, fixed)
+    return lambda x: function(x)(fixed)
 def rbind_3(
     function: Arrow[t0,Arrow[t1,Arrow[t2,t3]]],
     fixed: t2
 ) -> Arrow[t0,Arrow[t1,t3]]:
     """ fix the rightmost argument """
-    n = function.__code__.co_argcount
-    assert n == 3, "Wrong argument count"
-    return lambda x, y: function(x, y, fixed)
+    return lambda x: lambda y: function(x)(y)(fixed)
 def rbind_4(
     function: Arrow[t0,Arrow[t1,Arrow[t2,Arrow[t3,t4]]]],
     fixed: t3
 ) -> Arrow[t0,Arrow[t1,Arrow[t2,t4]]]:
     """ fix the rightmost argument """
-    n = function.__code__.co_argcount
-    assert n == 4, "Wrong argument count"
-    return lambda x, y, z: function(x, y, z, fixed)
+    return lambda x: lambda y: lambda z: function(x)(y)(z)(fixed)
 
 
 # def lbind(
@@ -808,25 +840,19 @@ def lbind_2(
     fixed: t0
 ) -> Arrow[t1,t2]:
     """ fix the rightmost argument """
-    n = function.__code__.co_argcount
-    assert n == 2, "Wrong argument count"
-    return lambda y: function(fixed, y)
+    return lambda y: function(fixed)(y)
 def lbind_3(
     function: Arrow[t0,Arrow[t1,Arrow[t2,t3]]],
     fixed: t0
 ) -> Arrow[t1,Arrow[t2,t3]]:
     """ fix the rightmost argument """
-    n = function.__code__.co_argcount
-    assert n == 3, "Wrong argument count"
-    return lambda y, z: function(fixed, y, z)
+    return lambda y: lambda z: function(fixed)(y)(z)
 def lbind_4(
     function: Arrow[t0,Arrow[t1,Arrow[t2,Arrow[t3,t4]]]],
     fixed: t0
 ) -> Arrow[t1,Arrow[t2,Arrow[t3,t4]]]:
     """ fix the rightmost argument """
-    n = function.__code__.co_argcount
-    assert n == 4, "Wrong argument count"
-    return lambda y, z, a: function(fixed, y, z, a)
+    return lambda y: lambda z: lambda a: function(fixed)(y)(z)(a)
 
 
 # def power(
@@ -860,7 +886,7 @@ def fork( #assume hom. -> cannot do, there is fork(recolor, ...)
     b: Arrow[t0,t2]
 ) -> Arrow[t0,t3]:
     """ creates a wrapper function """
-    return lambda x: outer(a(x), b(x))
+    return lambda x: outer(a(x))(b(x))
 
 
 # def apply(
@@ -908,13 +934,13 @@ def mapply_cf(
     container: FrozenSet[FrozenSet[t0]]
 ) -> FrozenSet[t0]: #error?
     """ apply and merge """
-    return merge(apply(function, container))
-def mapply_ct(
-    function: Arrow[Tuple[t0],Tuple[t0]],
-    container: Tuple[Tuple[t0]]
-) -> Tuple[t0]: #error?
-    """ apply and merge """
-    return merge(apply(function, container))
+    return merge_cf(apply_cf(function, container))
+# def mapply_ct(# rimuovo questo perché non c'è merge_ct
+#     function: Arrow[Tuple[t0],Tuple[t0]],
+#     container: Tuple[Tuple[t0]]
+# ) -> Tuple[t0]: #error?
+#     """ apply and merge """
+#     return merge_ct(apply(function, container))
 
 
 # def papply(

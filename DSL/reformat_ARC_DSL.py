@@ -2,12 +2,17 @@ import ARC_dsl
 import ARC_constants
 from ARC_types import *
 import types
-
+def stop():
+    raise TypeError("stop")
 #print(ARC_dsl.__dict__)
 # for k,v in ARC_dsl.__dict__.items():
 #     print(k,'----->',type(v), 'is function?', isinstance(v, types.FunctionType))
 
-def curry123(f: Callable):
+# inst_ARC_dsl=pickle.load(open("arc_dsl_8type.pkl"))
+# inst_ARC_cfg_1=pickle.load(open("arc_1gram_8type.pkl"))
+# stop()
+
+def curry123(f):
     n_args = f.__code__.co_argcount
     if n_args == 1:
         return f
@@ -34,10 +39,10 @@ semantics = {}
 semantics.update(functions)
 semantics.update(constants)
 
-from ARC_type_system import INT, INTEGER_TUPLE
+from ARC_type_system import BOOL, INT, INTEGER_TUPLE
 constant2type = {
-    "F": INT,
-    "T": INT,
+    "F": BOOL,
+    "T": BOOL,
     "ZERO": INT,
     "ONE": INT,
     "TWO": INT,
@@ -86,6 +91,10 @@ t3 = PolymorphicType('t3')
 t4 = PolymorphicType('t4')
 #a0 = ExceedinglyPolymorphicType('a0') # TODO: for now it is not used
 z0 = PolymorphicTypeOrPrimitiveArrow('z0')
+n0 = PolymorphicTypeNoArrow('n0')
+n1 = PolymorphicTypeNoArrow('n1')
+n2 = PolymorphicTypeNoArrow('n2')
+n3 = PolymorphicTypeNoArrow('n3')
 """)
     fo.write("\n\nprimitive_types = {\n")
     for k,f in uncarried_functions.items():
@@ -117,10 +126,14 @@ from ARC_dsl_cfg import ARC_DSL
 # from ..dsl import dsl # does not work
 inst_ARC_dsl = ARC_DSL(primitive_types=primitive_types_with_constants,
                        semantics=semantics,
-                       no_repetitions=no_repetitions)
+                       no_repetitions=no_repetitions,
+                       upper_bound_type_size=8)
+import dill as pickle
+ #essential for pickling anonymous functions
+# import pickle
 
 from ARC_type_system import Arrow, GRID
-#inst_ARC_cfg = inst_ARC_dsl.ARC_DSL_to_ARC_CFG(type_request=Arrow[GRID,GRID])
+# inst_ARC_cfg = inst_ARC_dsl.ARC_DSL_to_ARC_CFG(type_request=Arrow[GRID,GRID])
 # fo = open("compiled_ARC_dsl.txt", "w")
 # fo.write(str(inst_ARC_dsl))
 # fo.close()
@@ -140,11 +153,37 @@ fo.write(str(inst_ARC_dsl))
 fo.close()
 
 inst_ARC_dsl.instantiate_polymorphic_types()
-
 fo = open("DSL\\compiled_ARC_dsl_post_poly.txt", "w")
 print(f"Attento, sto per scrivere una stringa lunga {len(str(inst_ARC_dsl))}")
 fo.write(str(inst_ARC_dsl))
 fo.close()
+
+
+# inst_ARC_cfg_0 = inst_ARC_dsl.ARC_DSL_to_ARC_CFG(type_request=Arrow[GRID,GRID], n_gram=0)
+# fo = open("DSL\\compiled_ARC_cfg_ngram_0.txt", "w")
+# print(f"0-Attento, sto per scrivere una stringa lunga {len(str(inst_ARC_cfg_0))}")
+# fo.write(str(inst_ARC_cfg_0))
+# fo.close()
+inst_ARC_cfg_1 = inst_ARC_dsl.ARC_DSL_to_ARC_CFG(type_request=Arrow[GRID,GRID], n_gram=1)
+fo = open("DSL\\compiled_ARC_cfg_ngram_1.txt", "w")
+print(f"1-Attento, sto per scrivere una stringa lunga {len(str(inst_ARC_cfg_1))}")
+fo.write(str(inst_ARC_cfg_1))
+fo.close()
+# inst_ARC_cfg_2 = inst_ARC_dsl.ARC_DSL_to_ARC_CFG(type_request=Arrow[GRID,GRID], n_gram=2)
+# fo = open("DSL\\compiled_ARC_cfg_ngram_2.txt", "w")
+# print(f"2-Attento, sto per scrivere una stringa lunga {len(str(inst_ARC_cfg_2))}")
+# fo.write(str(inst_ARC_cfg_2))
+# fo.close()
+pickle.dump(inst_ARC_dsl, open("DSL\\arc_dsl_8type.pkl", "wb"))
+pickle.dump(inst_ARC_cfg_1, open("DSL\\arc_1gram_8type.pkl", "wb"))
+# pickle.dump(inst_ARC_cfg_2, open("arc_2gram_8type.pkl", "wb"))
+stop()
+# inst_ARC_cfg_3 = inst_ARC_dsl.ARC_DSL_to_ARC_CFG(type_request=Arrow[GRID,GRID], n_gram=3)
+# fo = open("DSL\\compiled_ARC_cfg_ngram_3.txt", "w")
+# print(f"3-Attento, sto per scrivere una stringa lunga {len(str(inst_ARC_cfg_3))}")
+# fo.write(str(inst_ARC_cfg_3))
+# fo.close()
+
 
 print("Fiuuuuuuuu")
 

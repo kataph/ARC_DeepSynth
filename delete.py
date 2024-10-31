@@ -51,7 +51,23 @@ p = Print()
 # print(dreamcoder_pcfg)
 # stop()
 # circuits_dsl = dsl.DSL(primitive_types=circuits.primitive_types, semantics=circuits.semantics, no_repetitions=circuits.no_repetitions)
-# # circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)))
+# circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=1)
+# p<circuits_cfg
+# circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=2)
+# p<circuits_cfg
+# import json
+# import pickle
+# d = {"start": circuits_cfg.start,
+# "rules": circuits_cfg.rules,
+# "max_program_depth": circuits_cfg.max_program_depth,}
+# #with open("del_cfg.py","w") as fo:
+# # json.dump(d, open("del_cfg.py","w"), indent=4, sort_keys=False)
+# pickle.dump(circuits_cfg, open("del_cfg.py","wb"))
+# dd = pickle.load(open("del_cfg.py","rb"))
+# print(dd)
+# print(dd.max_program_depth)
+# print(dd == circuits_cfg)
+# stop()
 # circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, BOOL), n_gram=2, max_program_depth=3)
 # print(circuits_dsl)
 # p<circuits_dsl.primitive_types()

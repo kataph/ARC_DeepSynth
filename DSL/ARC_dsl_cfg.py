@@ -1,13 +1,13 @@
 from collections import deque
 import copy
 from tqdm import tqdm as loading_bar
-
+from functools import lru_cache # Ah, l'avessi saputo prima che c'era...
 
 from ARC_type_system import * #Type, PolymorphicType, PolymorphicTypeOrPrimitiveArrow, ExceedinglyPolymorphicType, PrimitiveType, Arrow, Tuple, FrozenSet, Union, Couple, INT, BOOL
 import sys
 sys.path.append("C:\\Users\\Francesco\\Desktop\\github_repos\\ARC\\code\\auxillary_github_repos\\DeepSynth")
 from program import Program, Function, Variable, BasicPrimitive, New
-from cfg import CFG
+from ARC_cfg_pcfg import ARC_CFG
 
 from itertools import combinations_with_replacement, product
 
@@ -22,10 +22,11 @@ class ARC_DSL:
     for P a BasicPrimitive
     """
 
-    def __init__(self, semantics, primitive_types, no_repetitions=None):
+    def __init__(self, semantics, primitive_types, no_repetitions=None, upper_bound_type_size = 10):
         self.list_primitives = []
         self.semantics = {}
         self.no_repetitions = no_repetitions or set()
+        self.upper_bound_type_size = upper_bound_type_size
 
         for p in primitive_types:
             formatted_p = str(p)
@@ -75,7 +76,8 @@ class ARC_DSL:
             s = s + "{}: {}\n".format(P, P.type)
         return s
 
-    def instantiate_polymorphic_types(self, upper_bound_type_size=10):
+    @lru_cache(maxsize=5)
+    def instantiate_polymorphic_types(self):#, upper_bound_type_size=10): # shifted to object inizialization
         '''FC: from the original list of primitives, whenever a polym. type is found,
            the primitive is replaced with an instantiated versions. E.g. List t0 > List INT; List List INT;
            List List List INT; List BOOL; ...; List BOOL->INT; ... (note that these are the types, they
@@ -138,15 +140,17 @@ class ARC_DSL:
                         # eg if polym. type must not be intantiated by arrows:
                         # if isinstance(poly_type, NOARROWPOLYTYPE) and 
                         # type_ == Arrow: continue
+                        # if poly_type.name == "n0": 
+                        #     print("Flag")
                         if (isinstance(poly_type, PolymorphicTypeNoArrow) and 
-                            type_ == Arrow):
-                            assert False, "For now it should not be activated"
+                            isinstance(type_,Arrow)):
+                            # assert False, "For now it should not be activated"
                             continue
                         for instantiated_type in set_instantiated_types: # e.g. (INT->t1->t2)=(t0->t1->t2) with t0 replaced by INT in {set of all partially instantiated types}
                             unifier = {str(poly_type): type_} # e.g. {"t1": GRID} 
                             intermediate_type = copy.deepcopy(instantiated_type)
                             new_type = intermediate_type.apply_unifier(unifier) # obtains e.g. (INT->GRID->t2)
-                            if new_type.size() <= upper_bound_type_size:
+                            if new_type.size() <= self.upper_bound_type_size:
                                 new_set_instantiated_types.add(new_type)
                     set_instantiated_types = new_set_instantiated_types
                 for type_ in set_instantiated_types:
@@ -157,12 +161,12 @@ class ARC_DSL:
                             P.primitive, type_, probability={}
                         )
                     self.list_primitives.append(instantiated_P)
-                self.list_primitives.remove(P) # programs with polymorphic-variables-types are removed
+                self.list_primitives.remove(P) # programs with old uninstantiated-polymorphic-variables-types are removed
 
-    def DSL_to_CFG(
+    def ARC_DSL_to_ARC_CFG(
         self,
         type_request,
-        upper_bound_type_size=10,
+        # upper_bound_type_size=10, # shifted to object initialization
         max_program_depth=4,
         min_variable_depth=1,
         n_gram=2,
@@ -171,7 +175,7 @@ class ARC_DSL:
         Constructs a CFG from a DSL imposing bounds on size of the types
         and on the maximum program depth
         """
-        self.instantiate_polymorphic_types(upper_bound_type_size)
+        self.instantiate_polymorphic_types()
 
         if isinstance(type_request, Arrow):
             return_type = type_request.returns()
@@ -192,7 +196,10 @@ class ARC_DSL:
         list_to_be_treated = deque()
         list_to_be_treated.append((return_type, [], 0))
 
+        counter = 0
         while len(list_to_be_treated) > 0:
+            counter +=1 
+            if counter % 10 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
             current_type, context, depth = list_to_be_treated.pop()
             non_terminal = encode_non_terminal(current_type, context, depth)
 
@@ -217,7 +224,7 @@ class ARC_DSL:
                     if return_P == current_type and len(type_P.arguments()) == 0:
                         rules[non_terminal][P] = []
 
-            elif depth < max_program_depth:
+            elif depth < max_program_depth: # FC: looks like a slight error: < min_variable_depth? No, it is not error.
                 for P in self.list_primitives:
                     if isinstance(P, BasicPrimitive) and P.primitive in self.no_repetitions and \
                             context and len(context) > 0 and context[0][0].primitive == P.primitive:
@@ -241,7 +248,99 @@ class ARC_DSL:
 
                         rules[non_terminal][P] = decorated_arguments_P
 
-        return CFG(
+        return ARC_CFG(
+            start=(return_type, None, 0),
+            rules=rules,
+            max_program_depth=max_program_depth,
+            clean=True
+        )
+    def ARC_DSL_to_ARC_CFG_fast_maybe( #TODO: FC: nope
+        self,
+        type_request,
+        # upper_bound_type_size=10, # shifted to object initialization
+        max_program_depth=4,
+        min_variable_depth=1,
+        n_gram=2,
+    ):
+        """
+        Constructs a CFG from a DSL imposing bounds on size of the types
+        and on the maximum program depth
+        """
+        self.instantiate_polymorphic_types()
+
+        if isinstance(type_request, Arrow):
+            return_type = type_request.returns()
+            args = type_request.arguments()
+        else:
+            return_type = type_request
+            args = []
+
+        rules = {}
+
+        def encode_non_terminal(current_type, context, depth):
+            if len(context) == 0:
+                return current_type, None, depth
+            if n_gram == 2:
+                return current_type, context[0], depth
+            return current_type, context, depth
+
+        list_to_be_treated = deque()
+        list_to_be_treated.append((return_type, [], 0))
+
+        counter = 0
+
+        while len(list_to_be_treated) > 0:
+            counter +=1 
+            if counter % 10 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
+            current_type, context, depth = list_to_be_treated.pop()
+            non_terminal = encode_non_terminal(current_type, context, depth)
+
+            # a non-terminal is a triple (type, context, depth)
+            # if n_gram == 1 then context = None
+            # otherwise context is a list of (primitive, number_argument)
+            # print("\ncollecting from the non-terminal ", non_terminal)
+
+            if non_terminal not in rules:
+                rules[non_terminal] = {}
+
+            if depth < max_program_depth and depth >= min_variable_depth:
+                for i in range(len(args)):
+                    if current_type == args[i]:
+                        var = Variable(i, current_type, probability={})
+                        rules[non_terminal][var] = []
+
+            if depth == max_program_depth - 1:
+                for P in self.list_primitives:
+                    type_P = P.type
+                    return_P = type_P.returns()
+                    if return_P == current_type and len(type_P.arguments()) == 0:
+                        rules[non_terminal][P] = []
+
+            elif depth < max_program_depth: # FC: looks like a slight error: < min_variable_depth? No, it is not error.
+                for P in self.list_primitives:
+                    if isinstance(P, BasicPrimitive) and P.primitive in self.no_repetitions and \
+                            context and len(context) > 0 and context[0][0].primitive == P.primitive:
+                        continue
+                    type_P = P.type
+                    arguments_P = type_P.ends_with(current_type)
+                    if arguments_P != None:
+                        decorated_arguments_P = []
+                        for i, arg in enumerate(arguments_P):
+                            new_context = context.copy()
+                            new_context = [(P, i)] + new_context
+                            if len(new_context) > n_gram - 1:
+                                new_context.pop()
+                            decorated_arguments_P.append(
+                                encode_non_terminal(arg, new_context, depth + 1)
+                            )
+                            if (arg, new_context, depth + 1) not in list_to_be_treated:
+                                list_to_be_treated.appendleft(
+                                    (arg, new_context, depth + 1)
+                                )
+
+                        rules[non_terminal][P] = decorated_arguments_P
+
+        return ARC_CFG(
             start=(return_type, None, 0),
             rules=rules,
             max_program_depth=max_program_depth,

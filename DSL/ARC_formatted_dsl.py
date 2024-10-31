@@ -7,10 +7,14 @@ t3 = PolymorphicType('t3')
 t4 = PolymorphicType('t4')
 #a0 = ExceedinglyPolymorphicType('a0') # TODO: for now it is not used
 z0 = PolymorphicTypeOrPrimitiveArrow('z0')
+n0 = PolymorphicTypeNoArrow('n0')
+n1 = PolymorphicTypeNoArrow('n1')
+n2 = PolymorphicTypeNoArrow('n2')
+n3 = PolymorphicTypeNoArrow('n3')
 
 
 primitive_types = {
-	"identity": Arrow(t0,t0),
+	"identity": Arrow(n0,n0),
 	"add": Arrow(NUMERICAL,Arrow(NUMERICAL,NUMERICAL)),
 	"subtract": Arrow(NUMERICAL,Arrow(NUMERICAL,NUMERICAL)),
 	"multiply": Arrow(NUMERICAL,Arrow(NUMERICAL,NUMERICAL)),
@@ -20,14 +24,15 @@ primitive_types = {
 	"double": Arrow(NUMERICAL,NUMERICAL),
 	"halve": Arrow(NUMERICAL,NUMERICAL),
 	"flip": Arrow(BOOL,BOOL),
-	"equality": Arrow(t0,Arrow(t0,BOOL)),
+	"equality": Arrow(n0,Arrow(n0,BOOL)),
 	"contained_cf": Arrow(t0,Arrow(FrozenSet(t0),BOOL)),
 	"contained_ct": Arrow(t0,Arrow(Tuple(t0),BOOL)),
 	"combine_cf": Arrow(FrozenSet(t0),Arrow(FrozenSet(t0),FrozenSet(t0))),
 	"combine_ct": Arrow(Tuple(t0),Arrow(Tuple(t0),Tuple(t0))),
 	"intersection": Arrow(FrozenSet(t0),Arrow(FrozenSet(t0),FrozenSet(t0))),
 	"difference": Arrow(FrozenSet(t0),Arrow(FrozenSet(t0),FrozenSet(t0))),
-	"dedupe": Arrow(Tuple(t0),Tuple(t0)),
+	"dedupe_ti": Arrow(GRID,GRID),
+	"dedupe_i": Arrow(Tuple(INT),Tuple(INT)),
 	"order_cf": Arrow(FrozenSet(t0),Arrow(Arrow(t0,INT),Tuple(t0))),
 	"order_ct": Arrow(Tuple(t0),Arrow(Arrow(t0,INT),Tuple(t0))),
 	"repeat": Arrow(t0,Arrow(INT,Tuple(t0))),
@@ -35,7 +40,6 @@ primitive_types = {
 	"size_cf": Arrow(FrozenSet(t0),INT),
 	"size_ct": Arrow(Tuple(t0),INT),
 	"merge_cf": Arrow(FrozenSet(FrozenSet(t0)),FrozenSet(t0)),
-	"merge_ct": Arrow(Tuple(Tuple(t0)),Tuple(t0)),
 	"maximum": Arrow(INTEGER_SET,INT),
 	"minimum": Arrow(INTEGER_SET,INT),
 	"valmax_cf": Arrow(FrozenSet(t0),Arrow(Arrow(t0,INT),INT)),
@@ -46,7 +50,6 @@ primitive_types = {
 	"argmax_ct": Arrow(Tuple(t0),Arrow(Arrow(t0,INT),t0)),
 	"argmin_cf": Arrow(FrozenSet(t0),Arrow(Arrow(t0,INT),t0)),
 	"argmin_ct": Arrow(Tuple(t0),Arrow(Arrow(t0,INT),t0)),
-	"mostcommon_cf": Arrow(FrozenSet(t0),t0),
 	"mostcommon_ct": Arrow(Tuple(t0),t0),
 	"leastcommon_cf": Arrow(FrozenSet(t0),t0),
 	"leastcommon_ct": Arrow(Tuple(t0),t0),
@@ -80,9 +83,9 @@ primitive_types = {
 	"product_cf": Arrow(FrozenSet(t0),Arrow(FrozenSet(t0),FrozenSet(Couple(t0,t0)))),
 	"product_ct": Arrow(Tuple(t0),Arrow(Tuple(t0),Tuple(Couple(t0,t0)))),
 	"pair": Arrow(Tuple(t0),Arrow(Tuple(t0),Tuple(Tuple(t0)))),
-	"branch": Arrow(BOOL,Arrow(z0,Arrow(z0,z0))),
-	"compose": Arrow(Arrow(t0,t1),Arrow(Arrow(t1,t2),Arrow(t0,t2))),
-	"chain": Arrow(Arrow(t0,t1),Arrow(Arrow(t1,t2),Arrow(Arrow(t2,t3),Arrow(t0,t3)))),
+	"branch": Arrow(BOOL,Arrow(t0,Arrow(t0,t0))),
+	"compose": Arrow(Arrow(n0,n1),Arrow(Arrow(n1,n2),Arrow(n0,n2))),
+	"chain": Arrow(Arrow(n0,n1),Arrow(Arrow(n1,n2),Arrow(Arrow(n2,n3),Arrow(n0,n3)))),
 	"matcher": Arrow(Arrow(t0,t1),Arrow(t1,Arrow(t0,BOOL))),
 	"rbind_2": Arrow(Arrow(t0,Arrow(t1,t2)),Arrow(t1,Arrow(t0,t2))),
 	"rbind_3": Arrow(Arrow(t0,Arrow(t1,Arrow(t2,t3))),Arrow(t2,Arrow(t0,Arrow(t1,t3)))),
@@ -96,7 +99,6 @@ primitive_types = {
 	"apply_ct": Arrow(Arrow(t0,t1),Arrow(Tuple(t0),Tuple(t1))),
 	"rapply": Arrow(Tuple(Arrow(t0,t1)),Arrow(t0,Tuple(t1))),
 	"mapply_cf": Arrow(Arrow(FrozenSet(t0),FrozenSet(t0)),Arrow(FrozenSet(FrozenSet(t0)),FrozenSet(t0))),
-	"mapply_ct": Arrow(Arrow(Tuple(t0),Tuple(t0)),Arrow(Tuple(Tuple(t0)),Tuple(t0))),
 	"papply": Arrow(Arrow(t0,Arrow(t1,t2)),Arrow(Tuple(t0),Arrow(Tuple(t1),Tuple(t2)))),
 	"mpapply": Arrow(Arrow(t0,Arrow(t1,Tuple(t2))),Arrow(Tuple(t0),Arrow(Tuple(t1),Tuple(t2)))),
 	"prapply_cf": Arrow(Arrow(t0,Arrow(t1,t2)),Arrow(FrozenSet(t0),Arrow(FrozenSet(t1),FrozenSet(t2)))),
@@ -196,8 +198,8 @@ primitive_types = {
 	"compress": Arrow(GRID,GRID),
 	"hperiod": Arrow(OBJECT,INT),
 	"vperiod": Arrow(OBJECT,INT),
-	"F": INT,
-	"T": INT,
+	"F": BOOL,
+	"T": BOOL,
 	"ZERO": INT,
 	"ONE": INT,
 	"TWO": INT,
