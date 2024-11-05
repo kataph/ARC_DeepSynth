@@ -2,9 +2,10 @@ import os
 import sys
 import re
 
-from type_system import Type, PolymorphicType, PrimitiveType, Arrow, List, UnknownType
+from ARC_type_system import Type, PolymorphicType, PrimitiveType, Arrow, UnknownType
 from cons_list import index
 
+from time import perf_counter
 from itertools import combinations_with_replacement
 
 # dictionary { number of environment : value }
@@ -175,7 +176,7 @@ class Function(Program):
                     result = result(evaluated_arg)
                 self.evaluation[i] = result
                 return result
-        except (AttributeError, IndexError, ValueError, OverflowError, TypeError, StopIteration, ZeroDivisionError):
+        except (AttributeError, IndexError, ValueError, OverflowError, TypeError, StopIteration, RuntimeError, ZeroDivisionError):
             self.evaluation[i] = None
             return None
         except RecursionError: 
@@ -183,19 +184,26 @@ class Function(Program):
             return None
 
     def eval_naive(self, dsl, environment):
+        st = perf_counter()
         try:
             if len(self.arguments) == 0:
+                en = perf_counter()
+                if en-st > 1: raise TimeoutError(f"timeout with {en-st} time for {self}, {environment}") 
                 return self.function.eval_naive(dsl, environment)
             else:
                 evaluated_arguments = []
                 for j in range(len(self.arguments)):
                     e = self.arguments[j].eval_naive(dsl, environment)
                     evaluated_arguments.append(e)
+                en = perf_counter()
+                if en-st > 1: raise TimeoutError(f"timeout with {en-st} time for {self}, {environment}") 
                 result = self.function.eval_naive(dsl, environment)
                 for evaluated_arg in evaluated_arguments:
                     result = result(evaluated_arg)
+                en = perf_counter()
+                if en-st > 1: raise TimeoutError(f"timeout with {en-st} time for {self}, {environment}") 
                 return result
-        except (AttributeError, IndexError, ValueError, OverflowError, TypeError, StopIteration, ZeroDivisionError):
+        except (AttributeError, IndexError, ValueError, OverflowError, TypeError, StopIteration, RuntimeError, ZeroDivisionError, TimeoutError):
             return None
         except RecursionError: 
             print(self)
@@ -328,87 +336,87 @@ class New(Program):
         return New(self.body.derive_with_constants(constants), self.type, self.probability)
 
 
-# def string2function(ast_str: str, types) -> Function:
-#     # Remove leading/trailing whitespace and verify proper parenthesis
-#     ast_str = ast_str.strip()
-#     if not ast_str.startswith("(") or not ast_str.endswith(")"):
-#         raise ValueError("Invalid AST format. Missing parentheses.")
+def string2function(ast_str: str, types) -> Function:
+    # Remove leading/trailing whitespace and verify proper parenthesis
+    ast_str = ast_str.strip()
+    if not ast_str.startswith("(") or not ast_str.endswith(")"):
+        raise ValueError("Invalid AST format. Missing parentheses.")
 
-#     def parse_tokens(tokens: list[str]):
-#         # Parse tokens into an ASTNode recursively
-#         token = tokens.pop(0)
-#         if token == "(":
-#             # Start a new function node
-#             func_name = tokens.pop(0)  # The function name
-#             node = Function(function = BasicPrimitive(func_name, type_ = types[func_name]), arguments = [])
-#             while tokens[0] != ")":
-#                 if tokens[0] == "(":
-#                     node.arguments.append(parse_tokens(tokens))
-#                 else:
-#                     # Base case for literals or variable names
-#                     name = tokens.pop(0)
-#                     if name.startswith("var"):
-#                         node.arguments.append(Variable(variable = name[3:]))
-#                     else:
-#                         node.arguments.append(BasicPrimitive(name, type_ = types[name]))
-#             tokens.pop(0)  # Remove closing parenthesis
-#             return node
-#         elif token == ")":
-#             raise ValueError("Unexpected closing parenthesis")
-#         else:
-#             print("???")
-#         # else:
-#         #     print(1)
-#         #     name = tokens.pop(0)
-#         #     if name.startswith("var"):
-#         #         return Variable(variable = name[3:])
-#         #     else:
-#         #         return BasicPrimitive(name, type_ = types[name])
+    def parse_tokens(tokens: list[str]):
+        # Parse tokens into an ASTNode recursively
+        token = tokens.pop(0)
+        if token == "(":
+            # Start a new function node
+            func_name = tokens.pop(0)  # The function name
+            node = Function(function = BasicPrimitive(func_name, type_ = types[func_name]), arguments = [])
+            while tokens[0] != ")":
+                if tokens[0] == "(":
+                    node.arguments.append(parse_tokens(tokens))
+                else:
+                    # Base case for literals or variable names
+                    name = tokens.pop(0)
+                    if name.startswith("var"):
+                        node.arguments.append(Variable(variable = name[3:]))
+                    else:
+                        node.arguments.append(BasicPrimitive(name, type_ = types[name]))
+            tokens.pop(0)  # Remove closing parenthesis
+            return node
+        elif token == ")":
+            raise ValueError("Unexpected closing parenthesis")
+        else:
+            print("???")
+        # else:
+        #     print(1)
+        #     name = tokens.pop(0)
+        #     if name.startswith("var"):
+        #         return Variable(variable = name[3:])
+        #     else:
+        #         return BasicPrimitive(name, type_ = types[name])
 
-#     # Tokenize the input string
-#     tokens = re.findall(r"\(|\)|\w+", ast_str)
-#     return parse_tokens(tokens)
+    # Tokenize the input string
+    tokens = re.findall(r"\(|\)|\w+", ast_str)
+    return parse_tokens(tokens)
 
-# # ast_str = "repeat"
-# # ast_str = "SEVEN"
-# # ast_str = "(repeat (leastcommon_ct var0) SEVEN)"
-# # ast_str = "(downscale (apply_ct (repeat FIVE) (mostcommon_ct var0)) (size_ct (bottomhalf var0)))"
-# # ast_str = "(switch (leastcommon_cf (initset var0)) SEVEN (valmax_ct (repeat THREE_BY_THREE SIX) (index var0)))"
-# # import sys
-# # sys.path.append(r"C:\Users\Francesco\Desktop\github_repos\ARC\code\auxillary_github_repos\DeepSynth\DSL")
-# # from DSL.ARC_formatted_dsl import primitive_types
-# # print(ast_str)
-# # program = string2function(ast_str, types = primitive_types)
-# # print(program)
+# ast_str = "repeat"
+# ast_str = "SEVEN"
+# ast_str = "(repeat (leastcommon_ct var0) SEVEN)"
+# ast_str = "(downscale (apply_ct (repeat FIVE) (mostcommon_ct var0)) (size_ct (bottomhalf var0)))"
+# ast_str = "(switch (leastcommon_cf (initset var0)) SEVEN (valmax_ct (repeat THREE_BY_THREE SIX) (index var0)))"
+# import sys
+# sys.path.append(r"C:\Users\Francesco\Desktop\github_repos\ARC\code\auxillary_github_repos\DeepSynth\DSL")
+# from DSL.ARC_formatted_dsl import primitive_types
+# print(ast_str)
+# program = string2function(ast_str, types = primitive_types)
+# print(program)
 
-# def combine_programs_naive(*args, dsl, environment):
-#     if len(environment)>0:
-#         return TypeError("Multiple arguments not for this case")
-#     inp = environment[0] 
-#     programs: list[Function] = args
-#     for program in programs:
-#         out = program.eval_naive(dsl, [inp])
-#         inp = out
-#     return out
-# def combine_programs(*args, dsl, environment, i):
-#     if len(environment)>0:
-#         return TypeError("Multiple arguments not for this case")
-#     inp = environment[0] 
-#     programs: list[Function] = args
-#     for program in programs:
-#         out = program.eval(dsl, [inp], i)
-#         inp = out
-#     return out
+def combine_programs_naive(*args, dsl, environment):
+    if len(environment)>0:
+        return TypeError("Multiple arguments not for this case")
+    inp = environment[0] 
+    programs: list[Function] = args
+    for program in programs:
+        out = program.eval_naive(dsl, [inp])
+        inp = out
+    return out
+def combine_programs(*args, dsl, environment, i):
+    if len(environment)>0:
+        return TypeError("Multiple arguments not for this case")
+    inp = environment[0] 
+    programs: list[Function] = args
+    for program in programs:
+        out = program.eval(dsl, [inp], i)
+        inp = out
+    return out
 
-# def format_program_full(program, types, level = 0)->str:    
-#     if isinstance(program, BasicPrimitive):
-#         return format(program) + " type: " + str(types[format(program)]) + "\n"
-#     if isinstance(program, Variable):
-#         return format(program) + " type: GRID\n"
-#     if len(program.arguments) == 0:
-#         return format(program.function) + " type: " + str(types[format(program.function)]) + "\n"
-#     else:
-#         s = format(program.function) + " type: " + str(types[format(program.function)]) + "\n"
-#         for arg in program.arguments:
-#             s += "\t"*(level+1) + format_program_full(arg, types, level = level+1)
-#         return s
+def format_program_full(program, types, level = 0)->str:    
+    if isinstance(program, BasicPrimitive):
+        return format(program) + " type: " + str(types[format(program)]) + "\n"
+    if isinstance(program, Variable):
+        return format(program) + " type: GRID\n"
+    if len(program.arguments) == 0:
+        return format(program.function) + " type: " + str(types[format(program.function)]) + "\n"
+    else:
+        s = format(program.function) + " type: " + str(types[format(program.function)]) + "\n"
+        for arg in program.arguments:
+            s += "\t"*(level+1) + format_program_full(arg, types, level = level+1)
+        return s

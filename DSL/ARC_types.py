@@ -11,8 +11,9 @@ from typing import (
 
 Boolean = bool
 Integer = int
-IntegerTuple = Tuple[Integer, Integer]
-Numerical = Union[Integer, IntegerTuple]
+IntegerTuple = Tuple[Integer, Integer] # changed to Couple
+#IntegerTuple = Couple[Integer, Integer]
+#Numerical = Union[Integer, IntegerTuple] # suppressed
 IntegerSet = FrozenSet[Integer]
 Grid = Tuple[Tuple[Integer]]
 Cell = Tuple[Integer, IntegerTuple]
@@ -30,7 +31,7 @@ ContainerContainer = Container[Container]
 # Boolean.__str__ = lambda s: "BOOL"
 # Integer.__str__ = lambda s: "INT"
 IntegerTuple.__str__ = lambda s: "IntegerTuple"
-Numerical.__str__ = lambda s: "Numerical"
+# Numerical.__str__ = lambda s: "Numerical"
 IntegerSet.__str__ = lambda s: "IntegerSet"
 Grid.__str__ = lambda s: "Grid"
 Cell.__str__ = lambda s: "Cell"

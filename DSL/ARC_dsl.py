@@ -4,6 +4,10 @@ from ARC_types import *
 # overrides ALL!!!
 from ARC_type_system import *
 
+## TODO: boolean arg of branch must not be primitive, idem for inputs of numerical functions (eg add).
+## TODO: often GRID>GRID programs do not depend on inputs
+## TODO: backdrop following shoot produces big grids (e.g. 8000 elements). Subsequent operations can slow-down considerably the operations
+
 t0 = PolymorphicType('t0')
 t1 = PolymorphicType('t1')
 t2 = PolymorphicType('t2')
@@ -32,68 +36,115 @@ def identity(
     """ identity function """
     return x
 
-def add(
-    a: Numerical,
-    b: Numerical
-) -> Numerical:
+# def add(
+#     a: Numerical,
+#     b: Numerical
+# ) -> Numerical:
+#     """ addition """
+#     if isinstance(a, int) and isinstance(b, int):
+#         return a + b
+#     elif isinstance(a, tuple) and isinstance(b, tuple):
+#         return (a[0] + b[0], a[1] + b[1])
+#     elif isinstance(a, int) and isinstance(b, tuple):
+#         return (a + b[0], a + b[1])
+#     return (a[0] + b, a[1] + b)
+def add_ni(
+    a: Integer,
+    b: Integer
+) -> Integer:
     """ addition """
-    if isinstance(a, int) and isinstance(b, int):
-        return a + b
-    elif isinstance(a, tuple) and isinstance(b, tuple):
-        return (a[0] + b[0], a[1] + b[1])
-    elif isinstance(a, int) and isinstance(b, tuple):
-        return (a + b[0], a + b[1])
-    return (a[0] + b, a[1] + b)
+    return a+b
+def add_nit(
+    a: IntegerTuple,
+    b: IntegerTuple
+) -> IntegerTuple:
+    """ addition """
+    return (a[0] + b[0], a[1] + b[1])
 
 
-def subtract(
-    a: Numerical,
-    b: Numerical
-) -> Numerical:
-    """ subtraction """
-    if isinstance(a, int) and isinstance(b, int):
-        return a - b
-    elif isinstance(a, tuple) and isinstance(b, tuple):
-        return (a[0] - b[0], a[1] - b[1])
-    elif isinstance(a, int) and isinstance(b, tuple):
-        return (a - b[0], a - b[1])
-    return (a[0] - b, a[1] - b)
+# def subtract(
+#     a: Numerical,
+#     b: Numerical
+# ) -> Numerical:
+#     """ subtraction """
+#     if isinstance(a, int) and isinstance(b, int):
+#         return a - b
+#     elif isinstance(a, tuple) and isinstance(b, tuple):
+#         return (a[0] - b[0], a[1] - b[1])
+#     elif isinstance(a, int) and isinstance(b, tuple):
+#         return (a - b[0], a - b[1])
+#     return (a[0] - b, a[1] - b)
+def subtract_ni(
+    a: Integer,
+    b: Integer
+) -> Integer:
+    return a-b
+def subtract_nit(
+    a: IntegerTuple,
+    b: IntegerTuple
+) -> IntegerTuple:
+    return (a[0] - b[0], a[1] - b[1])
 
 
-def multiply(
-    a: Numerical,
-    b: Numerical
-) -> Numerical:
-    """ multiplication """
-    if isinstance(a, int) and isinstance(b, int):
-        return a * b
-    elif isinstance(a, tuple) and isinstance(b, tuple):
-        return (a[0] * b[0], a[1] * b[1])
-    elif isinstance(a, int) and isinstance(b, tuple):
-        return (a * b[0], a * b[1])
-    return (a[0] * b, a[1] * b)
-    
+# def multiply(
+#     a: Numerical,
+#     b: Numerical
+# ) -> Numerical:
+#     """ multiplication """
+#     if isinstance(a, int) and isinstance(b, int):
+#         return a * b
+#     elif isinstance(a, tuple) and isinstance(b, tuple):
+#         return (a[0] * b[0], a[1] * b[1])
+#     elif isinstance(a, int) and isinstance(b, tuple):
+#         return (a * b[0], a * b[1])
+#     return (a[0] * b, a[1] * b)
+def multiply_ni(
+    a: Integer,
+    b: Integer
+) -> Integer:
+    return a*b
+def multiply_nit(
+    a: IntegerTuple,
+    b: IntegerTuple
+) -> IntegerTuple:
+    return (a[0] * b[0], a[1] * b[1])
 
-def divide(
-    a: Numerical,
-    b: Numerical
-) -> Numerical:
-    """ floor division """
-    if isinstance(a, int) and isinstance(b, int):
-        return a // b
-    elif isinstance(a, tuple) and isinstance(b, tuple):
-        return (a[0] // b[0], a[1] // b[1])
-    elif isinstance(a, int) and isinstance(b, tuple):
-        return (a // b[0], a // b[1])
-    return (a[0] // b, a[1] // b)
+# def divide(
+#     a: Numerical,
+#     b: Numerical
+# ) -> Numerical:
+#     """ floor division """
+#     if isinstance(a, int) and isinstance(b, int):
+#         return a // b
+#     elif isinstance(a, tuple) and isinstance(b, tuple):
+#         return (a[0] // b[0], a[1] // b[1])
+#     elif isinstance(a, int) and isinstance(b, tuple):
+#         return (a // b[0], a // b[1])
+#     return (a[0] // b, a[1] // b)
+def divide_ni(
+    a: Integer,
+    b: Integer
+) -> Integer:
+    return a//b
+def divide_nit(
+    a: IntegerTuple,
+    b: IntegerTuple
+) -> IntegerTuple:
+    return (a[0] // b[0], a[1] // b[1])
 
-
-def invert(
-    n: Numerical
-) -> Numerical:
-    """ inversion with respect to addition """
-    return -n if isinstance(n, int) else (-n[0], -n[1])
-
+# def invert(
+#     n: Numerical
+# ) -> Numerical:
+#     """ inversion with respect to addition """
+#     return -n if isinstance(n, int) else (-n[0], -n[1])
+def invert_ni(
+    n: Integer,
+) -> Integer:
+    return -n
+def invert_nit(
+    n: IntegerTuple,
+) -> IntegerTuple:
+    return (-n[0], -n[1])
 
 def even(
     n: Integer
@@ -102,19 +153,38 @@ def even(
     return n % 2 == 0
 
 
-def double(
-    n: Numerical
-) -> Numerical:
+# def double(
+#     n: Numerical
+# ) -> Numerical:
+#     """ scaling by two """
+#     return n * 2 if isinstance(n, int) else (n[0] * 2, n[1] * 2)
+def double_ni(
+    n: Integer
+) -> Integer:
     """ scaling by two """
-    return n * 2 if isinstance(n, int) else (n[0] * 2, n[1] * 2)
+    return n * 2
+def double_nit(
+    n: IntegerTuple
+) -> IntegerTuple:
+    """ scaling by two """
+    return (n[0] * 2, n[1] * 2)
 
 
-def halve(
-    n: Numerical
-) -> Numerical:
-    """ scaling by one half """
-    return n // 2 if isinstance(n, int) else (n[0] // 2, n[1] // 2)
-
+# def halve(
+#     n: Numerical
+# ) -> Numerical:
+#     """ scaling by one half """
+#     return n // 2 if isinstance(n, int) else (n[0] // 2, n[1] // 2)
+def halve_ni(
+    n: Integer
+) -> Integer:
+    """ scaling by two """
+    return n // 2
+def halve_nit(
+    n: IntegerTuple
+) -> IntegerTuple:
+    """ scaling by two """
+    return (n[0] // 2, n[1] // 2)
 
 def flip(
     b: Boolean
@@ -303,11 +373,11 @@ def merge_cf(
 ) -> FrozenSet[t0]:
     """ merging """
     return type(containers)(e for c in containers for e in c)
-# def merge_ct(
-#     containers: Tuple[Tuple[t0]]
-# ) -> Tuple[t0]:
-#     """ merging """
-#     return type(containers)(e for c in containers for e in c)
+def merge_ct(
+    containers: Tuple[Tuple[t0]]
+) -> Tuple[t0]:
+    """ merging """
+    return type(containers)(e for c in containers for e in c)
 
 
 def maximum(
@@ -466,38 +536,84 @@ def either(
     return a or b
 
 
-def increment(
-    x: Numerical
-) -> Numerical:
+# def increment(
+#     x: Numerical
+# ) -> Numerical:
+#     """ incrementing """
+#     return x + 1 if isinstance(x, int) else (x[0] + 1, x[1] + 1)
+def increment_ni(
+    x: Integer
+) -> Integer:
     """ incrementing """
-    return x + 1 if isinstance(x, int) else (x[0] + 1, x[1] + 1)
+    return x + 1
+def increment_nit(
+    x: IntegerTuple
+) -> IntegerTuple:
+    """ incrementing """
+    return (x[0] + 1, x[1] + 1)
 
 
-def decrement(
-    x: Numerical
-) -> Numerical:
+# def decrement(
+#     x: Numerical
+# ) -> Numerical:
+#     """ decrementing """
+#     return x - 1 if isinstance(x, int) else (x[0] - 1, x[1] - 1)
+def decrement_ni(
+    x: Integer
+) -> Integer:
     """ decrementing """
-    return x - 1 if isinstance(x, int) else (x[0] - 1, x[1] - 1)
+    return x - 1 
+def decrement_nit(
+    x: IntegerTuple
+) -> IntegerTuple:
+    """ decrementing """
+    return (x[0] - 1, x[1] - 1)
 
 
-def crement(
-    x: Numerical
-) -> Numerical:
+# def crement(
+#     x: Numerical
+# ) -> Numerical:
+#     """ incrementing positive and decrementing negative """
+#     if isinstance(x, int):
+#         return 0 if x == 0 else (x + 1 if x > 0 else x - 1)
+#     return (
+#         0 if x[0] == 0 else (x[0] + 1 if x[0] > 0 else x[0] - 1),
+#         0 if x[1] == 0 else (x[1] + 1 if x[1] > 0 else x[1] - 1)
+#     )
+def crement_ni(
+    x: Integer
+) -> Integer:
     """ incrementing positive and decrementing negative """
-    if isinstance(x, int):
-        return 0 if x == 0 else (x + 1 if x > 0 else x - 1)
+    return 0 if x == 0 else (x + 1 if x > 0 else x - 1)
+def crement_nit(
+    x: IntegerTuple
+) -> IntegerTuple:
+    """ incrementing positive and decrementing negative """
     return (
         0 if x[0] == 0 else (x[0] + 1 if x[0] > 0 else x[0] - 1),
         0 if x[1] == 0 else (x[1] + 1 if x[1] > 0 else x[1] - 1)
     )
 
 
-def sign(
-    x: Numerical
-) -> Numerical:
+# def sign(
+#     x: Numerical
+# ) -> Numerical:
+#     """ sign """
+#     if isinstance(x, int):
+#         return 0 if x == 0 else (1 if x > 0 else -1)
+#     return (
+#         0 if x[0] == 0 else (1 if x[0] > 0 else -1),
+#         0 if x[1] == 0 else (1 if x[1] > 0 else -1)
+#     )
+def sign_ni(
+    x: Integer
+) -> Integer:
     """ sign """
-    if isinstance(x, int):
-        return 0 if x == 0 else (1 if x > 0 else -1)
+    return 0 if x == 0 else (1 if x > 0 else -1)
+def sign_nit(
+    x: IntegerTuple
+) -> IntegerTuple:
+    """ sign """
     return (
         0 if x[0] == 0 else (1 if x[0] > 0 else -1),
         0 if x[1] == 0 else (1 if x[1] > 0 else -1)
@@ -602,6 +718,7 @@ def totuple(
 # ) -> Any:
 #     """ first item of container """
 #     return next(iter(container))
+# TODO: these can return StopIteration error
 def first_cf(
     container: FrozenSet[t0]
 ) -> t0:
@@ -760,8 +877,8 @@ def branch( #error in solutions with branch taking callables and obtaining ident
 #     """ function composition """
 #     return lambda x: outer(inner(x))
 def compose( #TODO: maybe put type to no-arrow-poly?
-    outer: Arrow[n0,n1],
-    inner: Arrow[n1,n2]
+    outer: Arrow[n1,n2],
+    inner: Arrow[n0,n1]
 ) -> Arrow[n0,n2]:
     """ function composition """
     return lambda x: outer(inner(x))
@@ -775,9 +892,9 @@ def compose( #TODO: maybe put type to no-arrow-poly?
 #     """ function composition with three functions """
 #     return lambda x: h(g(f(x)))
 def chain( # found counterexample ...
-    h: Arrow[n0,n1],
+    h: Arrow[n2,n3],
     g: Arrow[n1,n2],
-    f: Arrow[n2,n3],
+    f: Arrow[n0,n1],
 ) -> Arrow[n0,n3]:
     """ function composition with three functions """
     return lambda x: h(g(f(x)))
@@ -863,14 +980,15 @@ def lbind_4(
 #     if n == 1:
 #         return function
 #     return compose(function, power(function, n - 1))
-def power(
-    function: Arrow[t0,t0],
-    n: Integer
-) -> Arrow[t0,t0]:
-    """ power of function """
-    if n == 1:
-        return function
-    return compose(function, power(function, n - 1))
+# TODO: got this (why?) that gives recursionerror (power (branch F NINE) NEG_TWO FIVE)
+# def power( 
+#     function: Arrow[t0,t0],
+#     n: Integer
+# ) -> Arrow[t0,t0]:
+#     """ power of function """
+#     if n == 1:
+#         return function
+#     return compose(function, power(function, n - 1))
 
 
 # def fork(
@@ -935,12 +1053,12 @@ def mapply_cf(
 ) -> FrozenSet[t0]: #error?
     """ apply and merge """
     return merge_cf(apply_cf(function, container))
-# def mapply_ct(# rimuovo questo perché non c'è merge_ct
-#     function: Arrow[Tuple[t0],Tuple[t0]],
-#     container: Tuple[Tuple[t0]]
-# ) -> Tuple[t0]: #error?
-#     """ apply and merge """
-#     return merge_ct(apply(function, container))
+def mapply_ct(# TODO: rimuovo questo perché non c'è merge_ct?
+    function: Arrow[Tuple[t0],Tuple[t0]],
+    container: Tuple[Tuple[t0]]
+) -> Tuple[t0]: #error?
+    """ apply and merge """
+    return merge_ct(apply(function, container))
 
 
 # def papply(
@@ -1570,6 +1688,7 @@ def upscale(
         return shift(frozenset(o), (di_inv, dj_inv))
 
 
+# TODO: can raise ZeroDivisionError
 def downscale(
     grid: Grid,
     factor: Integer

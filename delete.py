@@ -53,8 +53,12 @@ p = Print()
 # circuits_dsl = dsl.DSL(primitive_types=circuits.primitive_types, semantics=circuits.semantics, no_repetitions=circuits.no_repetitions)
 # circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=1)
 # p<circuits_cfg
+# p<circuits_cfg.CFG_to_Random_PCFG()
 # circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=2)
 # p<circuits_cfg
+# p<circuits_cfg.CFG_to_Random_PCFG()
+# stop()
+
 # import json
 # import pickle
 # d = {"start": circuits_cfg.start,

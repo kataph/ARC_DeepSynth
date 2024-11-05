@@ -1,12 +1,12 @@
 from collections import deque
 import copy
 from tqdm import tqdm as loading_bar
-from functools import lru_cache # Ah, l'avessi saputo prima che c'era...
+#from functools import lru_cache # Ah, l'avessi saputo prima che c'era...
 
 from ARC_type_system import * #Type, PolymorphicType, PolymorphicTypeOrPrimitiveArrow, ExceedinglyPolymorphicType, PrimitiveType, Arrow, Tuple, FrozenSet, Union, Couple, INT, BOOL
 import sys
 sys.path.append("C:\\Users\\Francesco\\Desktop\\github_repos\\ARC\\code\\auxillary_github_repos\\DeepSynth")
-from program import Program, Function, Variable, BasicPrimitive, New
+from ARC_program import Program, Function, Variable, BasicPrimitive, New
 from ARC_cfg_pcfg import ARC_CFG
 
 from itertools import combinations_with_replacement, product
@@ -76,7 +76,6 @@ class ARC_DSL:
             s = s + "{}: {}\n".format(P, P.type)
         return s
 
-    @lru_cache(maxsize=5)
     def instantiate_polymorphic_types(self):#, upper_bound_type_size=10): # shifted to object inizialization
         '''FC: from the original list of primitives, whenever a polym. type is found,
            the primitive is replaced with an instantiated versions. E.g. List t0 > List INT; List List INT;
@@ -108,7 +107,10 @@ class ARC_DSL:
         #     set_types.add(new_type)
         #     new_type = List(new_type)
         #     set_types.add(new_type)
-        set_basic_types = {PIECE, CELL, BOOL, INTEGER_SET, INT, INDICES, OBJECTS, INTEGER_TUPLE, Tuple(INT), OBJECT, GRID, NUMERICAL, PATCH, Tuple(GRID), ELEMENT}
+        set_basic_types = {PIECE, CELL, BOOL, INTEGER_SET, INT, INDICES, OBJECTS, INTEGER_TUPLE, Tuple(INT), OBJECT, GRID, 
+                           #NUMERICAL,
+                           PATCH, Tuple(GRID), ELEMENT, 
+                           Couple(PATCH,PATCH), Couple(OBJECT,OBJECT), Couple(INDICES,INDICES)}
         # set_types is the set of types used to instantiate the polymorphic types
         set_types = set(set_basic_types)
 
@@ -117,6 +119,7 @@ class ARC_DSL:
         #     for type_2 in set_basic_types:
         #         new_type2 = Arrow(type_, type_2)
         #         set_types.add(new_type2)
+        # TODO: perlomeno anche alcune coppie
         {set_types.add(Arrow(type_, type_2)) for type_, type_2 in product(set_basic_types, set_basic_types)}
 
         # print("set_types", set_types)
@@ -199,7 +202,7 @@ class ARC_DSL:
         counter = 0
         while len(list_to_be_treated) > 0:
             counter +=1 
-            if counter % 10 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
+            if counter % 50 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
             current_type, context, depth = list_to_be_treated.pop()
             non_terminal = encode_non_terminal(current_type, context, depth)
 
@@ -211,12 +214,14 @@ class ARC_DSL:
             if non_terminal not in rules:
                 rules[non_terminal] = {}
 
+            # If program has the right deplth variables are possible expansions (no variables before min depth)
             if depth < max_program_depth and depth >= min_variable_depth:
                 for i in range(len(args)):
                     if current_type == args[i]:
                         var = Variable(i, current_type, probability={})
                         rules[non_terminal][var] = []
 
+            # At the end you all compatible constants
             if depth == max_program_depth - 1:
                 for P in self.list_primitives:
                     type_P = P.type
@@ -230,6 +235,7 @@ class ARC_DSL:
                             context and len(context) > 0 and context[0][0].primitive == P.primitive:
                         continue
                     type_P = P.type
+                    # here is critical: ends_with must be aware of Union construct: if current_type = Union(A,B) and type_P in {A,B} then arguments_P != None
                     arguments_P = type_P.ends_with(current_type)
                     if arguments_P != None:
                         decorated_arguments_P = []

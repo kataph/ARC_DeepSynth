@@ -4,8 +4,8 @@ import numpy as np
 import sys
 sys.path.append("C:\\Users\\Francesco\\Desktop\\github_repos\\ARC\\code\\auxillary_github_repos\\DeepSynth")
 
-from pcfg_logprob import LogProbPCFG
-from pcfg import PCFG
+from ARC_pcfg_logprob import LogProbPCFG
+from ARC_pcfg import ARC_PCFG
 
 class ARC_CFG:
     '''
@@ -112,7 +112,7 @@ class ARC_CFG:
             p = len(self.rules[S])
             for P in self.rules[S]:
                 augmented_rules[S][P] = (self.rules[S][P], 1 / p)
-        return PCFG(start = self.start, 
+        return ARC_PCFG(start = self.start, 
             rules = augmented_rules, 
             max_program_depth = self.max_program_depth,
             clean = True)
@@ -132,7 +132,7 @@ class ARC_CFG:
             new_rules[S] = {}
             for i, P in enumerate(self.rules[S]):
                 new_rules[S][P] = (self.rules[S][P], weights[random_permutation[i]])
-        return PCFG(start = self.start, 
+        return ARC_PCFG(start = self.start, 
             rules = new_rules, 
             max_program_depth = self.max_program_depth,
             clean = True)

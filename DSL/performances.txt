@@ -1,0 +1,14 @@
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 10, 'batch_write_size': 10} Took 34.5953 secondsFunction write_random_ARC_walks() {'n_walks': 100, 'len_walk': 5, 'batch_write_size': 10} Took 16.7654 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 6, 'batch_write_size': 10} Took 20.2405 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 6, 'batch_write_size': 10} Took 27.0768 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 2, 'batch_write_size': 10} Took 7.6900 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 11, 'batch_write_size': 10} Took 35.9601 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 5, 'batch_write_size': 10} Took 15.9639 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 5, 'batch_write_size': 1} Took 16.8217 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 5, 'batch_write_size': 100} Took 15.8985 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 5, 'batch_write_size': 50} Took 17.3436 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 4, 'batch_write_size': 50} Took 12.7204 seconds
+Function write_random_ARC_walks() {'n_walks': 1, 'len_walk': 4, 'batch_write_size': 50} Took 1.4221 seconds
+Function write_random_ARC_walks() {'n_walks': 10, 'len_walk': 4, 'batch_write_size': 50} Took 1.5650 seconds
+Function write_random_ARC_walks() {'n_walks': 100, 'len_walk': 4, 'batch_write_size': 50} Took 12.5236 seconds
+Function write_random_ARC_walks() {'n_walks': 1000, 'len_walk': 4, 'batch_write_size': 50} Took 105.0569 seconds
