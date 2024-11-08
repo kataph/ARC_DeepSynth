@@ -78,6 +78,19 @@ class Type:
         self = Arrow(Arrow(INT, INT), Arrow(INT, INT))
         other = INT
         ends_with(self, other) = [Arrow(INT, INT), INT]
+
+        and for unions?
+        self = Arrow(INT, Arrow(INT, INDICES))   (PATCH = Union(OBJECTS, INDICES)); PIECE = Union(GRID, PATCH))
+        self2 = Arrow(INT, Arrow(INT, PATCH)) 
+        other = Arrow(INT, PIECE) --> PIECE accepts GRID, OBJECTS, INDICES
+        other2 = Arrow(INT, PATCH) --> PATCH accepts OBJECTS, INDICES
+        other3 = Arrow(INT, PIECE) --> OBJECTS accepts only OBJECTS
+        ends_with(self, other) = [INT]
+        ends_with(self, other2) = [INT]
+        ends_with(self, other3) = []
+        ends_with(self2, other) = [INT]
+        ends_with(self2, other2) = [INT]
+        ends_with(self2, other3) = []
         '''
         return self.ends_with_rec(other, [])
 

@@ -4,8 +4,10 @@ from ARC_type_system import Arrow, GRID, FrozenSet
 from ARC_dsl_cfg import ARC_DSL
 from ARC_cfg_pcfg import ARC_CFG
 
-from program import format_program_full
+from ARC_program import format_program_full
 from ARC_formatted_dsl import primitive_types
+
+from write_random_ARC_walks import is_good_arc_program
 
 ARC_dsl:ARC_DSL =pickle.load(open("DSL\\arc_dsl_8type.pkl", "rb"))
 ARC_cfg_1:ARC_CFG=pickle.load(open("DSL\\arc_1gram_8type.pkl", "rb"))
@@ -23,21 +25,14 @@ x = "(cellwise (identity (dedupe_ti var0)) (pair (last_ct var0) (interval EIGHT 
 good = 0
 count = 0
 # 35% good, very good
-for i,program in enumerate(ARC_unif_pcfg.sampling()):
+for i,pr in enumerate(ARC_unif_pcfg.sampling()):
     count += 1
-    print(program)
-    print(program.arguments)
-    # print(vars(program))
-    pr = program
     # print(format_program_full(pr, types=primitive_types))
     # if count == 5: raise TypeError("1")
     try:
         out = pr.eval_naive(dsl = ARC_dsl, environment=[grid])
     except:
         out = None
-    if out == None:
-        print("None for program ", pr)
-    if out != None:
         if all(out) and len(out) > 1 and len(out[0]) > 1:
             good +=1
             # if good > 4:

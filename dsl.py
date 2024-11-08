@@ -22,6 +22,7 @@ class DSL:
         self.list_primitives = []
         self.semantics = {}
         self.no_repetitions = no_repetitions or set()
+        self.hashed_type_expansions = {}
 
         for p in primitive_types:
             formatted_p = str(p)
@@ -212,6 +213,116 @@ class DSL:
                                 )
 
                         rules[non_terminal][P] = decorated_arguments_P
+
+        return CFG(
+            start=(return_type, None, 0),
+            rules=rules,
+            max_program_depth=max_program_depth,
+            clean=True
+        )
+    
+    def DSL_to_CFG_fast(
+        self,
+        type_request,
+        upper_bound_type_size=10,
+        max_program_depth=4,
+        min_variable_depth=1,
+        n_gram=2,
+    ):
+        """
+        Constructs a CFG from a DSL imposing bounds on size of the types
+        and on the maximum program depth
+        """
+        self.instantiate_polymorphic_types(upper_bound_type_size)
+
+        if isinstance(type_request, Arrow):
+            return_type = type_request.returns()
+            args = type_request.arguments()
+        else:
+            return_type = type_request
+            args = []
+
+        rules = {}
+
+        def encode_non_terminal(current_type, context, depth):
+            if len(context) == 0:
+                return current_type, None, depth
+            if n_gram == 2:
+                return current_type, context[0], depth
+            return current_type, context, depth
+        def get_new_context(old_context, program, index):
+            new_context = old_context.copy()
+            new_context = [(program, index)] + new_context
+            if len(new_context) > n_gram - 1:
+                new_context.pop()
+            return new_context
+
+        list_to_be_treated = deque()
+        list_to_be_treated.append((return_type, [], 0))
+
+        while len(list_to_be_treated) > 0:
+            current_type, context, depth = list_to_be_treated.pop()
+            non_terminal = encode_non_terminal(current_type, context, depth)
+
+            # a non-terminal is a triple (type, context, depth)
+            # if n_gram == 1 then context = None
+            # otherwise context is a list of (primitive, number_argument)
+            # print("\ncollecting from the non-terminal ", non_terminal)
+
+            if non_terminal not in rules:
+                rules[non_terminal] = {}
+
+            if depth < max_program_depth and depth >= min_variable_depth:
+                for i in range(len(args)):
+                    if current_type == args[i]:
+                        var = Variable(i, current_type, probability={})
+                        rules[non_terminal][var] = []
+
+            if depth == max_program_depth - 1:
+                for P in self.list_primitives:
+                    type_P = P.type
+                    return_P = type_P.returns()
+                    if return_P == current_type and len(type_P.arguments()) == 0:
+                        rules[non_terminal][P] = []
+
+            elif depth < max_program_depth:
+                # current_type, context, depth > non_terminal
+                if current_type.hash in self.hashed_type_expansions:
+                    P2arguments_dict=self.hashed_type_expansions[current_type.hash]
+                    # rules[non_terminal][P] = decorated_arguments_P
+                    for P,arguments_P in P2arguments_dict.items():
+                        decorated_arguments_P=[encode_non_terminal(arg, get_new_context(context,P,i), depth+1) for i,arg in enumerate(arguments_P)]
+                        rules[non_terminal].update({P:decorated_arguments_P})
+                        list_to_be_treated.extendleft((arg, get_new_context(context,P,i), depth + 1) for i,arg in enumerate(arguments_P) if (arg, get_new_context(context,P,i), depth + 1) not in list_to_be_treated)
+                        # for i,arg in enumerate(arguments_P):
+                        #     new_context = get_new_context(context,P,i)
+                        #     if (arg, new_context, depth + 1) not in list_to_be_treated: 
+                        #         list_to_be_treated.appendleft( (arg, new_context, depth + 1))
+                else:
+                    self.hashed_type_expansions[current_type.hash]={}
+                    for P in self.list_primitives:
+                        if isinstance(P, BasicPrimitive) and P.primitive in self.no_repetitions and \
+                                context and len(context) > 0 and context[0][0].primitive == P.primitive:
+                            continue
+                        type_P = P.type
+                        arguments_P = type_P.ends_with(current_type)
+                        if arguments_P != None:
+                            decorated_arguments_P = []
+                            for i, arg in enumerate(arguments_P):
+                                # new_context = context.copy()
+                                # new_context = [(P, i)] + new_context
+                                # if len(new_context) > n_gram - 1:
+                                #     new_context.pop()
+                                new_context = get_new_context(context,P,i)
+                                decorated_arguments_P.append(
+                                    encode_non_terminal(arg, new_context, depth + 1)
+                                )
+                                if (arg, new_context, depth + 1) not in list_to_be_treated:
+                                    list_to_be_treated.appendleft(
+                                        (arg, new_context, depth + 1)
+                                    )
+                            rules[non_terminal][P] = decorated_arguments_P
+                            self.hashed_type_expansions[current_type.hash].update({P:arguments_P})
 
         return CFG(
             start=(return_type, None, 0),
