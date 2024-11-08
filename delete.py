@@ -4,6 +4,10 @@ os.environ["PYTHONHASHSEED"] = "seed"
 import DSL.circuits as circuits
 import DSL.list as dreamcoder
 from type_system import *
+import pickle 
+import sys
+# sys.path.append(r"C:\Users\Francesco\Desktop\github_repos\ARC\code\auxillary_github_repos\DeepSynth\DSL")
+# from DSL.ARC_cfg_pcfg import ARC_CFG
 
 import dsl
 
@@ -23,7 +27,14 @@ def stop():
 # stop()
 class Print():
     def __lt__(self,x):
-        print(x)
+        if isinstance(x,tuple):
+            to_write = str(x[0])
+            file_name = x[1]
+            with open(file_name,"wt") as fo:
+                fo.write(to_write)
+            print(f"written to {file_name}")
+        else:
+            print(x)
 p = Print()
 # p<1
 
@@ -40,8 +51,20 @@ p = Print()
 #p<cfg.CFG.__doc__
 #p<dsl.DSL.__doc__
 
+arc_cfg_2: ARC_CFG = pickle.load(open("DSL\\arc_2gram_8type.pkl","rb"))
+p<(arc_cfg_2.CFG_to_Uniform_PCFG(), "pcfg_arc_2gram_8type_uniform.txt")
+stop()
+
 # dreamcoder_dsl = dsl.DSL(primitive_types=dreamcoder.primitive_types, semantics=dreamcoder.semantics)#, no_repetitions=dreamcoder.no_repetitions)
-# dreamcoder_cfg = dreamcoder_dsl.DSL_to_CFG(type_request = Arrow(List(INT), List(INT)))
+# dreamcoder_cfg_1 = dreamcoder_dsl.DSL_to_CFG(type_request = Arrow(List(INT), List(INT)),n_gram=1)
+# dreamcoder_cfg_2 = dreamcoder_dsl.DSL_to_CFG(type_request = Arrow(List(INT), List(INT)),n_gram=2)
+# p<(dreamcoder_cfg_1,"cfg_dreamcoder_1.txt")
+# p<(dreamcoder_cfg_2,"cfg_dreamcoder_2.txt")
+# dreamcoder_cfg_fast_1 = dreamcoder_dsl.DSL_to_CFG_fast(type_request = Arrow(List(INT), List(INT)),n_gram=1)
+# dreamcoder_cfg_fast_2 = dreamcoder_dsl.DSL_to_CFG_fast(type_request = Arrow(List(INT), List(INT)),n_gram=2)
+# p<(dreamcoder_cfg_fast_1,"cfg_fast_dreamcoder_1.txt")
+# p<(dreamcoder_cfg_fast_2,"cfg_fast_dreamcoder_2.txt")
+
 # dreamcoder_pcfg = dreamcoder_cfg.CFG_to_Uniform_PCFG()
 # from pprint import pprint
 #pprint(vars(dreamcoder_pcfg))
@@ -50,14 +73,20 @@ p = Print()
 # fo.close()
 # print(dreamcoder_pcfg)
 # stop()
-# circuits_dsl = dsl.DSL(primitive_types=circuits.primitive_types, semantics=circuits.semantics, no_repetitions=circuits.no_repetitions)
-# circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=1)
-# p<circuits_cfg
+circuits_dsl = dsl.DSL(primitive_types=circuits.primitive_types, semantics=circuits.semantics, no_repetitions=circuits.no_repetitions)
+circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=1)
+circuits_cfg_fast = circuits_dsl.DSL_to_CFG_fast(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=1)
+p<circuits_cfg
+p<(circuits_cfg,"cfg_circuits_1.txt")
+p<(circuits_cfg_fast,"cfg_fast_circuits_1.txt")
 # p<circuits_cfg.CFG_to_Random_PCFG()
-# circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=2)
-# p<circuits_cfg
+circuits_cfg = circuits_dsl.DSL_to_CFG(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=2)
+circuits_cfg_fast = circuits_dsl.DSL_to_CFG_fast(type_request = Arrow(BOOL, Arrow(BOOL, BOOL)),n_gram=2)
+p<circuits_cfg
+p<(circuits_cfg,"cfg_circuits_2.txt")
+p<(circuits_cfg_fast,"cfg_fast_circuits_2.txt")
 # p<circuits_cfg.CFG_to_Random_PCFG()
-# stop()
+stop()
 
 # import json
 # import pickle

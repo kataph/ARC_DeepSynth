@@ -1,5 +1,5 @@
-from ARC_type_system import *
 
+from ARC_type_system import *
 t0 = PolymorphicType('t0')
 t1 = PolymorphicType('t1')
 t2 = PolymorphicType('t2')
@@ -11,7 +11,7 @@ n0 = PolymorphicTypeNoArrow('n0')
 n1 = PolymorphicTypeNoArrow('n1')
 n2 = PolymorphicTypeNoArrow('n2')
 n3 = PolymorphicTypeNoArrow('n3')
-
+    
 
 primitive_types = {
 	"identity": Arrow(n0,n0),

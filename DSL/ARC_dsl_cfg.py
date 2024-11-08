@@ -27,6 +27,7 @@ class ARC_DSL:
         self.semantics = {}
         self.no_repetitions = no_repetitions or set()
         self.upper_bound_type_size = upper_bound_type_size
+        self.hashed_type_expansions = {}
 
         for p in primitive_types:
             formatted_p = str(p)
@@ -132,7 +133,7 @@ class ARC_DSL:
             assert isinstance(P, (New, BasicPrimitive))
             type_P = P.type
             set_basic_types_P, set_polymorphic_types_P = type_P.decompose_type()
-            print(P, P.type, set_basic_types_P, set_polymorphic_types_P)
+            #print(P, P.type, set_basic_types_P, set_polymorphic_types_P)
             if set_polymorphic_types_P:
                 set_instantiated_types = set()
                 set_instantiated_types.add(type_P)
@@ -202,7 +203,7 @@ class ARC_DSL:
         counter = 0
         while len(list_to_be_treated) > 0:
             counter +=1 
-            if counter % 50 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
+            if counter % 5 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
             current_type, context, depth = list_to_be_treated.pop()
             non_terminal = encode_non_terminal(current_type, context, depth)
 
@@ -260,10 +261,10 @@ class ARC_DSL:
             max_program_depth=max_program_depth,
             clean=True
         )
-    def ARC_DSL_to_ARC_CFG_fast_maybe( #TODO: FC: nope
+    def ARC_DSL_to_ARC_CFG_fast(
         self,
         type_request,
-        # upper_bound_type_size=10, # shifted to object initialization
+        upper_bound_type_size=10,
         max_program_depth=4,
         min_variable_depth=1,
         n_gram=2,
@@ -289,15 +290,20 @@ class ARC_DSL:
             if n_gram == 2:
                 return current_type, context[0], depth
             return current_type, context, depth
+        def get_new_context(old_context, program, index):
+            new_context = old_context.copy()
+            new_context = [(program, index)] + new_context
+            if len(new_context) > n_gram - 1:
+                new_context.pop()
+            return new_context
 
         list_to_be_treated = deque()
         list_to_be_treated.append((return_type, [], 0))
 
         counter = 0
-
         while len(list_to_be_treated) > 0:
             counter +=1 
-            if counter % 10 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}")
+            if counter % 10 == 0: print(f"iteration {counter}, deque len = {len(list_to_be_treated)}, rules written {len(rules)}, non terminals hashed {len(self.hashed_type_expansions)}")
             current_type, context, depth = list_to_be_treated.pop()
             non_terminal = encode_non_terminal(current_type, context, depth)
 
@@ -322,29 +328,38 @@ class ARC_DSL:
                     if return_P == current_type and len(type_P.arguments()) == 0:
                         rules[non_terminal][P] = []
 
-            elif depth < max_program_depth: # FC: looks like a slight error: < min_variable_depth? No, it is not error.
-                for P in self.list_primitives:
-                    if isinstance(P, BasicPrimitive) and P.primitive in self.no_repetitions and \
-                            context and len(context) > 0 and context[0][0].primitive == P.primitive:
-                        continue
-                    type_P = P.type
-                    arguments_P = type_P.ends_with(current_type)
-                    if arguments_P != None:
-                        decorated_arguments_P = []
-                        for i, arg in enumerate(arguments_P):
-                            new_context = context.copy()
-                            new_context = [(P, i)] + new_context
-                            if len(new_context) > n_gram - 1:
-                                new_context.pop()
-                            decorated_arguments_P.append(
-                                encode_non_terminal(arg, new_context, depth + 1)
-                            )
-                            if (arg, new_context, depth + 1) not in list_to_be_treated:
-                                list_to_be_treated.appendleft(
-                                    (arg, new_context, depth + 1)
+            elif depth < max_program_depth:
+                if current_type.hash in self.hashed_type_expansions:
+                    P2arguments_dict=self.hashed_type_expansions[current_type.hash]
+                    for P,arguments_P in P2arguments_dict.items():
+                        decorated_arguments_P=[encode_non_terminal(arg, get_new_context(context,P,i), depth+1) for i,arg in enumerate(arguments_P)]
+                        rules[non_terminal].update({P:decorated_arguments_P})
+                        list_to_be_treated.extendleft((arg, get_new_context(context,P,i), depth + 1) for i,arg in enumerate(arguments_P) if (arg, get_new_context(context,P,i), depth + 1) not in list_to_be_treated)
+                        # for i,arg in enumerate(arguments_P):
+                        #     new_context = get_new_context(context,P,i)
+                        #     if (arg, new_context, depth + 1) not in list_to_be_treated: 
+                        #         list_to_be_treated.appendleft( (arg, new_context, depth + 1))
+                else:
+                    self.hashed_type_expansions[current_type.hash]={}
+                    for P in self.list_primitives:
+                        if isinstance(P, BasicPrimitive) and P.primitive in self.no_repetitions and \
+                                context and len(context) > 0 and context[0][0].primitive == P.primitive:
+                            continue
+                        type_P = P.type
+                        arguments_P = type_P.ends_with(current_type)
+                        if arguments_P != None:
+                            decorated_arguments_P = []
+                            for i, arg in enumerate(arguments_P):
+                                new_context = get_new_context(context,P,i)
+                                decorated_arguments_P.append(
+                                    encode_non_terminal(arg, new_context, depth + 1)
                                 )
-
-                        rules[non_terminal][P] = decorated_arguments_P
+                                if (arg, new_context, depth + 1) not in list_to_be_treated:
+                                    list_to_be_treated.appendleft(
+                                        (arg, new_context, depth + 1)
+                                    )
+                            rules[non_terminal][P] = decorated_arguments_P
+                            self.hashed_type_expansions[current_type.hash].update({P:arguments_P})
 
         return ARC_CFG(
             start=(return_type, None, 0),
@@ -352,3 +367,4 @@ class ARC_DSL:
             max_program_depth=max_program_depth,
             clean=True
         )
+

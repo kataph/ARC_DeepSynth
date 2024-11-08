@@ -55,18 +55,11 @@ start: (GRID, None, 0)
  (Arrow(BOOL,Arrow(INT,Arrow(INT,INT))), None, 2)
    branch - Arrow(BOOL,Arrow(INT,Arrow(INT,INT))): []
 #
- (Arrow(Tuple(INT),BOOL), None, 2)
-   contained_ct - Arrow(INT,Arrow(Tuple(INT),BOOL)): [(INT, None, 3)]
-#
  (Arrow(INT,INTEGER_SET), None, 2)
    initset - Arrow(INT,INTEGER_SET): []
 #
- (Arrow(Tuple(INT),INT), None, 2)
-   size_ct - Arrow(Tuple(INT),INT): []
-   mostcommon_ct - Arrow(Tuple(INT),INT): []
-   leastcommon_ct - Arrow(Tuple(INT),INT): []
-   first_ct - Arrow(Tuple(INT),INT): []
-   last_ct - Arrow(Tuple(INT),INT): []
+ (Arrow(Tuple(INT),BOOL), None, 2)
+   contained_ct - Arrow(INT,Arrow(Tuple(INT),BOOL)): [(INT, None, 3)]
 #
  (Arrow(INTEGER_SET,INT), None, 2)
    maximum - Arrow(INTEGER_SET,INT): []
@@ -76,17 +69,31 @@ start: (GRID, None, 0)
    first_cf - Arrow(INTEGER_SET,INT): []
    last_cf - Arrow(INTEGER_SET,INT): []
 #
- (Tuple(PIECE), None, 2)
-   hsplit - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
-   vsplit - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
-   repeat - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
+ (Arrow(Tuple(INT),INT), None, 2)
+   size_ct - Arrow(Tuple(INT),INT): []
+   mostcommon_ct - Arrow(Tuple(INT),INT): []
+   leastcommon_ct - Arrow(Tuple(INT),INT): []
+   first_ct - Arrow(Tuple(INT),INT): []
+   last_ct - Arrow(Tuple(INT),INT): []
 #
  (Tuple(ELEMENT), None, 2)
    hsplit - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
    vsplit - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
    repeat - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
 #
+ (Tuple(PIECE), None, 2)
+   hsplit - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
+   vsplit - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
+   repeat - Arrow(GRID,Arrow(INT,Tuple(GRID))): [(GRID, None, 3), (INT, None, 3)]
+#
  (FrozenSet(ELEMENT), None, 2)
+   objects - Arrow(GRID,Arrow(BOOL,Arrow(BOOL,Arrow(BOOL,OBJECTS)))): [(GRID, None, 3), (BOOL, None, 3), (BOOL, None, 3), (BOOL, None, 3)]
+   partition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
+   fgpartition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
+   frontiers - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
+   initset - Arrow(GRID,FrozenSet(GRID)): [(GRID, None, 3)]
+#
+ (FrozenSet(PIECE), None, 2)
    objects - Arrow(GRID,Arrow(BOOL,Arrow(BOOL,Arrow(BOOL,OBJECTS)))): [(GRID, None, 3), (BOOL, None, 3), (BOOL, None, 3), (BOOL, None, 3)]
    partition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
    fgpartition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
@@ -99,21 +106,14 @@ start: (GRID, None, 0)
    fgpartition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
    frontiers - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
 #
+ (FrozenSet(BOOL), None, 2)
+   initset - Arrow(BOOL,FrozenSet(BOOL)): [(BOOL, None, 3)]
+#
  (FrozenSet(PATCH), None, 2)
    objects - Arrow(GRID,Arrow(BOOL,Arrow(BOOL,Arrow(BOOL,OBJECTS)))): [(GRID, None, 3), (BOOL, None, 3), (BOOL, None, 3), (BOOL, None, 3)]
    partition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
    fgpartition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
    frontiers - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
-#
- (FrozenSet(PIECE), None, 2)
-   objects - Arrow(GRID,Arrow(BOOL,Arrow(BOOL,Arrow(BOOL,OBJECTS)))): [(GRID, None, 3), (BOOL, None, 3), (BOOL, None, 3), (BOOL, None, 3)]
-   partition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
-   fgpartition - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
-   frontiers - Arrow(GRID,OBJECTS): [(GRID, None, 3)]
-   initset - Arrow(GRID,FrozenSet(GRID)): [(GRID, None, 3)]
-#
- (FrozenSet(BOOL), None, 2)
-   initset - Arrow(BOOL,FrozenSet(BOOL)): [(BOOL, None, 3)]
 #
  (ELEMENT, None, 2)
    dedupe_ti - Arrow(GRID,GRID): [(GRID, None, 3)]
@@ -145,12 +145,6 @@ start: (GRID, None, 0)
  (Arrow(INT,Arrow(INT,INTEGER_TUPLE)), None, 2)
    astuple - Arrow(INT,Arrow(INT,INTEGER_TUPLE)): []
 #
- (Arrow(INT,BOOL), None, 2)
-   even - Arrow(INT,BOOL): []
-   greater - Arrow(INT,Arrow(INT,BOOL)): [(INT, None, 3)]
-   positive - Arrow(INT,BOOL): []
-   equality - Arrow(INT,Arrow(INT,BOOL)): [(INT, None, 3)]
-#
  (Arrow(INT,INT), None, 2)
    add_ni - Arrow(INT,Arrow(INT,INT)): [(INT, None, 3)]
    subtract_ni - Arrow(INT,Arrow(INT,INT)): [(INT, None, 3)]
@@ -170,6 +164,12 @@ start: (GRID, None, 0)
    toivec - Arrow(INT,INTEGER_TUPLE): []
    tojvec - Arrow(INT,INTEGER_TUPLE): []
    astuple - Arrow(INT,Arrow(INT,INTEGER_TUPLE)): [(INT, None, 3)]
+#
+ (Arrow(INT,BOOL), None, 2)
+   even - Arrow(INT,BOOL): []
+   greater - Arrow(INT,Arrow(INT,BOOL)): [(INT, None, 3)]
+   positive - Arrow(INT,BOOL): []
+   equality - Arrow(INT,Arrow(INT,BOOL)): [(INT, None, 3)]
 #
  (Arrow(INTEGER_TUPLE,BOOL), None, 2)
    equality - Arrow(INTEGER_TUPLE,Arrow(INTEGER_TUPLE,BOOL)): [(INTEGER_TUPLE, None, 3)]
@@ -237,9 +237,9 @@ start: (GRID, None, 0)
    T - BOOL: []
    identity - Arrow(BOOL,BOOL): [(BOOL, None, 3)]
    equality - Arrow(BOOL,Arrow(BOOL,BOOL)): [(BOOL, None, 3), (BOOL, None, 3)]
-   equality - Arrow(INTEGER_TUPLE,Arrow(INTEGER_TUPLE,BOOL)): [(INTEGER_TUPLE, None, 3), (INTEGER_TUPLE, None, 3)]
-   equality - Arrow(GRID,Arrow(GRID,BOOL)): [(GRID, None, 3), (GRID, None, 3)]
    equality - Arrow(INT,Arrow(INT,BOOL)): [(INT, None, 3), (INT, None, 3)]
+   equality - Arrow(GRID,Arrow(GRID,BOOL)): [(GRID, None, 3), (GRID, None, 3)]
+   equality - Arrow(INTEGER_TUPLE,Arrow(INTEGER_TUPLE,BOOL)): [(INTEGER_TUPLE, None, 3), (INTEGER_TUPLE, None, 3)]
    branch - Arrow(BOOL,Arrow(BOOL,Arrow(BOOL,BOOL))): [(BOOL, None, 3), (BOOL, None, 3), (BOOL, None, 3)]
 #
  (Tuple(BOOL), None, 2)
@@ -411,9 +411,9 @@ start: (GRID, None, 0)
    compose - Arrow(Arrow(INT,Tuple(INT)),Arrow(Arrow(INT,INT),Arrow(INT,Tuple(INT)))): [(Arrow(INT,Tuple(INT)), None, 2), (Arrow(INT,INT), None, 2), (INT, None, 2)]
    rbind_2 - Arrow(Arrow(INT,Arrow(INT,Tuple(INT))),Arrow(INT,Arrow(INT,Tuple(INT)))): [(Arrow(INT,Arrow(INT,Tuple(INT))), None, 2), (INT, None, 2), (INT, None, 2)]
    lbind_2 - Arrow(Arrow(INT,Arrow(INT,Tuple(INT))),Arrow(INT,Arrow(INT,Tuple(INT)))): [(Arrow(INT,Arrow(INT,Tuple(INT))), None, 2), (INT, None, 2), (INT, None, 2)]
-   apply_ct - Arrow(Arrow(Tuple(INT),INT),Arrow(GRID,Tuple(INT))): [(Arrow(Tuple(INT),INT), None, 2), (GRID, None, 2)]
-   apply_ct - Arrow(Arrow(INT,INT),Arrow(Tuple(INT),Tuple(INT))): [(Arrow(INT,INT), None, 2), (Tuple(INT), None, 2)]
    apply_ct - Arrow(Arrow(INTEGER_TUPLE,INT),Arrow(Tuple(INTEGER_TUPLE),Tuple(INT))): [(Arrow(INTEGER_TUPLE,INT), None, 2), (Tuple(INTEGER_TUPLE), None, 2)]
+   apply_ct - Arrow(Arrow(INT,INT),Arrow(Tuple(INT),Tuple(INT))): [(Arrow(INT,INT), None, 2), (Tuple(INT), None, 2)]
+   apply_ct - Arrow(Arrow(Tuple(INT),INT),Arrow(GRID,Tuple(INT))): [(Arrow(Tuple(INT),INT), None, 2), (GRID, None, 2)]
 #
  (OBJECT, None, 1)
    recolor - Arrow(INT,Arrow(PATCH,OBJECT)): [(INT, None, 2), (PATCH, None, 2)]
@@ -445,8 +445,8 @@ start: (GRID, None, 0)
    shoot - Arrow(INTEGER_TUPLE,Arrow(INTEGER_TUPLE,INDICES)): [(INTEGER_TUPLE, None, 2), (INTEGER_TUPLE, None, 2)]
    occurrences - Arrow(GRID,Arrow(OBJECT,INDICES)): [(GRID, None, 2), (OBJECT, None, 2)]
    identity - Arrow(INDICES,INDICES): [(INDICES, None, 2)]
-   identity - Arrow(PATCH,PATCH): [(PATCH, None, 2)]
    identity - Arrow(OBJECT,OBJECT): [(OBJECT, None, 2)]
+   identity - Arrow(PATCH,PATCH): [(PATCH, None, 2)]
    initset - Arrow(INTEGER_TUPLE,INDICES): [(INTEGER_TUPLE, None, 2)]
    insert - Arrow(INTEGER_TUPLE,Arrow(INDICES,INDICES)): [(INTEGER_TUPLE, None, 2), (INDICES, None, 2)]
    remove_cf - Arrow(INTEGER_TUPLE,Arrow(INDICES,INDICES)): [(INTEGER_TUPLE, None, 2), (INDICES, None, 2)]
@@ -497,32 +497,32 @@ start: (GRID, None, 0)
    NEG_ONE - INT: []
    NEG_TWO - INT: []
    identity - Arrow(INT,INT): [(INT, None, 2)]
-   size_cf - Arrow(FrozenSet(BOOL),INT): [(FrozenSet(BOOL), None, 2)]
-   size_cf - Arrow(FrozenSet(PIECE),INT): [(FrozenSet(PIECE), None, 2)]
+   size_cf - Arrow(INDICES,INT): [(INDICES, None, 2)]
    size_cf - Arrow(INTEGER_SET,INT): [(INTEGER_SET, None, 2)]
    size_cf - Arrow(FrozenSet(PATCH),INT): [(FrozenSet(PATCH), None, 2)]
-   size_cf - Arrow(INDICES,INT): [(INDICES, None, 2)]
-   size_cf - Arrow(OBJECTS,INT): [(OBJECTS, None, 2)]
-   size_cf - Arrow(FrozenSet(ELEMENT),INT): [(FrozenSet(ELEMENT), None, 2)]
    size_cf - Arrow(FrozenSet(GRID),INT): [(FrozenSet(GRID), None, 2)]
+   size_cf - Arrow(FrozenSet(BOOL),INT): [(FrozenSet(BOOL), None, 2)]
+   size_cf - Arrow(OBJECTS,INT): [(OBJECTS, None, 2)]
+   size_cf - Arrow(FrozenSet(PIECE),INT): [(FrozenSet(PIECE), None, 2)]
+   size_cf - Arrow(FrozenSet(ELEMENT),INT): [(FrozenSet(ELEMENT), None, 2)]
    size_cf - Arrow(OBJECT,INT): [(OBJECT, None, 2)]
-   size_ct - Arrow(Tuple(INTEGER_TUPLE),INT): [(Tuple(INTEGER_TUPLE), None, 2)]
+   size_ct - Arrow(Tuple(PIECE),INT): [(Tuple(PIECE), None, 2)]
    size_ct - Arrow(Tuple(ELEMENT),INT): [(Tuple(ELEMENT), None, 2)]
+   size_ct - Arrow(GRID,INT): [(GRID, None, 2)]
+   size_ct - Arrow(Tuple(INTEGER_TUPLE),INT): [(Tuple(INTEGER_TUPLE), None, 2)]
    size_ct - Arrow(Tuple(GRID),INT): [(Tuple(GRID), None, 2)]
    size_ct - Arrow(Tuple(BOOL),INT): [(Tuple(BOOL), None, 2)]
-   size_ct - Arrow(Tuple(PIECE),INT): [(Tuple(PIECE), None, 2)]
    size_ct - Arrow(Tuple(INT),INT): [(Tuple(INT), None, 2)]
-   size_ct - Arrow(GRID,INT): [(GRID, None, 2)]
    valmax_cf - Arrow(INDICES,Arrow(Arrow(INTEGER_TUPLE,INT),INT)): [(INDICES, None, 2), (Arrow(INTEGER_TUPLE,INT), None, 2)]
    valmax_cf - Arrow(INTEGER_SET,Arrow(Arrow(INT,INT),INT)): [(INTEGER_SET, None, 2), (Arrow(INT,INT), None, 2)]
-   valmax_ct - Arrow(Tuple(INT),Arrow(Arrow(INT,INT),INT)): [(Tuple(INT), None, 2), (Arrow(INT,INT), None, 2)]
-   valmax_ct - Arrow(GRID,Arrow(Arrow(Tuple(INT),INT),INT)): [(GRID, None, 2), (Arrow(Tuple(INT),INT), None, 2)]
    valmax_ct - Arrow(Tuple(INTEGER_TUPLE),Arrow(Arrow(INTEGER_TUPLE,INT),INT)): [(Tuple(INTEGER_TUPLE), None, 2), (Arrow(INTEGER_TUPLE,INT), None, 2)]
+   valmax_ct - Arrow(GRID,Arrow(Arrow(Tuple(INT),INT),INT)): [(GRID, None, 2), (Arrow(Tuple(INT),INT), None, 2)]
+   valmax_ct - Arrow(Tuple(INT),Arrow(Arrow(INT,INT),INT)): [(Tuple(INT), None, 2), (Arrow(INT,INT), None, 2)]
    valmin_cf - Arrow(INDICES,Arrow(Arrow(INTEGER_TUPLE,INT),INT)): [(INDICES, None, 2), (Arrow(INTEGER_TUPLE,INT), None, 2)]
    valmin_cf - Arrow(INTEGER_SET,Arrow(Arrow(INT,INT),INT)): [(INTEGER_SET, None, 2), (Arrow(INT,INT), None, 2)]
-   valmin_ct - Arrow(Tuple(INT),Arrow(Arrow(INT,INT),INT)): [(Tuple(INT), None, 2), (Arrow(INT,INT), None, 2)]
-   valmin_ct - Arrow(GRID,Arrow(Arrow(Tuple(INT),INT),INT)): [(GRID, None, 2), (Arrow(Tuple(INT),INT), None, 2)]
    valmin_ct - Arrow(Tuple(INTEGER_TUPLE),Arrow(Arrow(INTEGER_TUPLE,INT),INT)): [(Tuple(INTEGER_TUPLE), None, 2), (Arrow(INTEGER_TUPLE,INT), None, 2)]
+   valmin_ct - Arrow(GRID,Arrow(Arrow(Tuple(INT),INT),INT)): [(GRID, None, 2), (Arrow(Tuple(INT),INT), None, 2)]
+   valmin_ct - Arrow(Tuple(INT),Arrow(Arrow(INT,INT),INT)): [(Tuple(INT), None, 2), (Arrow(INT,INT), None, 2)]
    argmax_cf - Arrow(INTEGER_SET,Arrow(Arrow(INT,INT),INT)): [(INTEGER_SET, None, 2), (Arrow(INT,INT), None, 2)]
    argmax_ct - Arrow(Tuple(INT),Arrow(Arrow(INT,INT),INT)): [(Tuple(INT), None, 2), (Arrow(INT,INT), None, 2)]
    argmin_cf - Arrow(INTEGER_SET,Arrow(Arrow(INT,INT),INT)): [(INTEGER_SET, None, 2), (Arrow(INT,INT), None, 2)]
@@ -537,15 +537,15 @@ start: (GRID, None, 0)
    last_cf - Arrow(INTEGER_SET,INT): [(INTEGER_SET, None, 2)]
    last_ct - Arrow(Tuple(INT),INT): [(Tuple(INT), None, 2)]
    other_cf - Arrow(INTEGER_SET,Arrow(INT,INT)): [(INTEGER_SET, None, 2), (INT, None, 2)]
-   branch - Arrow(BOOL,Arrow(INT,Arrow(INT,INT))): [(BOOL, None, 2), (INT, None, 2), (INT, None, 2)]
    branch - Arrow(BOOL,Arrow(Arrow(INT,INT),Arrow(Arrow(INT,INT),Arrow(INT,INT)))): [(BOOL, None, 2), (Arrow(INT,INT), None, 2), (Arrow(INT,INT), None, 2), (INT, None, 2)]
-   compose - Arrow(Arrow(INTEGER_TUPLE,INT),Arrow(Arrow(INT,INTEGER_TUPLE),Arrow(INT,INT))): [(Arrow(INTEGER_TUPLE,INT), None, 2), (Arrow(INT,INTEGER_TUPLE), None, 2), (INT, None, 2)]
-   compose - Arrow(Arrow(INT,INT),Arrow(Arrow(INT,INT),Arrow(INT,INT))): [(Arrow(INT,INT), None, 2), (Arrow(INT,INT), None, 2), (INT, None, 2)]
-   compose - Arrow(Arrow(INT,INT),Arrow(Arrow(INTEGER_TUPLE,INT),Arrow(INTEGER_TUPLE,INT))): [(Arrow(INT,INT), None, 2), (Arrow(INTEGER_TUPLE,INT), None, 2), (INTEGER_TUPLE, None, 2)]
+   branch - Arrow(BOOL,Arrow(INT,Arrow(INT,INT))): [(BOOL, None, 2), (INT, None, 2), (INT, None, 2)]
    compose - Arrow(Arrow(INT,INT),Arrow(Arrow(Tuple(INT),INT),Arrow(Tuple(INT),INT))): [(Arrow(INT,INT), None, 2), (Arrow(Tuple(INT),INT), None, 2), (Tuple(INT), None, 2)]
-   compose - Arrow(Arrow(INT,INT),Arrow(Arrow(INTEGER_SET,INT),Arrow(INTEGER_SET,INT))): [(Arrow(INT,INT), None, 2), (Arrow(INTEGER_SET,INT), None, 2), (INTEGER_SET, None, 2)]
    compose - Arrow(Arrow(Tuple(INT),INT),Arrow(Arrow(INT,Tuple(INT)),Arrow(INT,INT))): [(Arrow(Tuple(INT),INT), None, 2), (Arrow(INT,Tuple(INT)), None, 2), (INT, None, 2)]
+   compose - Arrow(Arrow(INT,INT),Arrow(Arrow(INT,INT),Arrow(INT,INT))): [(Arrow(INT,INT), None, 2), (Arrow(INT,INT), None, 2), (INT, None, 2)]
    compose - Arrow(Arrow(INTEGER_SET,INT),Arrow(Arrow(INT,INTEGER_SET),Arrow(INT,INT))): [(Arrow(INTEGER_SET,INT), None, 2), (Arrow(INT,INTEGER_SET), None, 2), (INT, None, 2)]
+   compose - Arrow(Arrow(INT,INT),Arrow(Arrow(INTEGER_TUPLE,INT),Arrow(INTEGER_TUPLE,INT))): [(Arrow(INT,INT), None, 2), (Arrow(INTEGER_TUPLE,INT), None, 2), (INTEGER_TUPLE, None, 2)]
+   compose - Arrow(Arrow(INT,INT),Arrow(Arrow(INTEGER_SET,INT),Arrow(INTEGER_SET,INT))): [(Arrow(INT,INT), None, 2), (Arrow(INTEGER_SET,INT), None, 2), (INTEGER_SET, None, 2)]
+   compose - Arrow(Arrow(INTEGER_TUPLE,INT),Arrow(Arrow(INT,INTEGER_TUPLE),Arrow(INT,INT))): [(Arrow(INTEGER_TUPLE,INT), None, 2), (Arrow(INT,INTEGER_TUPLE), None, 2), (INT, None, 2)]
    chain - Arrow(Arrow(INT,INT),Arrow(Arrow(INT,INT),Arrow(Arrow(INT,INT),Arrow(INT,INT)))): [(Arrow(INT,INT), None, 2), (Arrow(INT,INT), None, 2), (Arrow(INT,INT), None, 2), (INT, None, 2)]
    rbind_2 - Arrow(Arrow(BOOL,Arrow(INT,Arrow(INT,INT))),Arrow(INT,Arrow(BOOL,Arrow(INT,INT)))): [(Arrow(BOOL,Arrow(INT,Arrow(INT,INT))), None, 2), (INT, None, 2), (BOOL, None, 2), (INT, None, 2)]
    rbind_2 - Arrow(Arrow(INTEGER_SET,Arrow(INT,INT)),Arrow(INT,Arrow(INTEGER_SET,INT))): [(Arrow(INTEGER_SET,Arrow(INT,INT)), None, 2), (INT, None, 2), (INTEGER_SET, None, 2)]

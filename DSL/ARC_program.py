@@ -5,6 +5,10 @@ import re
 from ARC_type_system import Type, PolymorphicType, PrimitiveType, Arrow, UnknownType
 from cons_list import index
 
+import ARC_constants
+ARC_constants_names = [item for item in dir(ARC_constants) if not item.startswith("__")]
+
+
 from time import perf_counter
 from itertools import combinations_with_replacement
 
@@ -114,7 +118,7 @@ class Variable(Program):
         self.evaluation = {}
 
     def __repr__(self):
-        return "var" + format(self.variable)
+        return "( var" + format(self.variable) + " )"
 
     def eval(self, dsl, environment, i):
         if i in self.evaluation:
@@ -147,18 +151,17 @@ class Function(Program):
         self.arguments = arguments
         self.type = type_
         self.hash = hash(tuple([arg.hash for arg in self.arguments] + [self.function.hash]))
-
         self.probability = probability
         self.evaluation = {}
 
     def __repr__(self):
         if len(self.arguments) == 0:
-            return format(self.function)
+            return "( " + format(self.function) + " )"
         else:
-            s = "(" + format(self.function)
+            s = "( " + format(self.function)
             for arg in self.arguments:
                 s += " " + format(arg)
-            return s + ")"
+            return s + " )"
 
     def eval(self, dsl, environment, i):
         if i in self.evaluation:
@@ -230,7 +233,7 @@ class Lambda(Program):
         self.evaluation = {}
 
     def __repr__(self):
-        s = "(lambda " + format(self.body) + ")"
+        s = "( lambda " + format(self.body) + " )"
         return s
 
     def eval(self, dsl, environment, i):
@@ -259,7 +262,7 @@ class BasicPrimitive(Program):
         self.primitive = primitive
         # assert isinstance(type_, Type)
         self.type = type_
-        self.is_a_constant = not isinstance(type_, Arrow) and primitive.startswith("constant")
+        self.is_a_constant = not isinstance(type_, Arrow)# and primitive.startswith("constant") # FC: no constants otherwise
         self.constant_evaluation = constant_evaluation
         self.hash = hash(primitive) + self.type.hash
 
@@ -271,7 +274,11 @@ class BasicPrimitive(Program):
         representation without type
         """
         if self.is_a_constant and self.constant_evaluation:
-            return format(self.constant_evaluation)
+            return "( " + format(self.constant_evaluation) + " )"
+        if self.is_a_constant:
+            return "( " + format(self.primitive) + " )"
+        if self.primitive in ARC_constants_names:
+            return "( " + format(self.primitive) + " )"
         return format(self.primitive)
 
     def eval(self, dsl, environment, i):
