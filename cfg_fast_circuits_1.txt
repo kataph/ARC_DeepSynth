@@ -1,0 +1,28 @@
+Print a CFG
+start: (bool, None, 0)
+#
+ (bool, None, 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, None, 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, None, 3), (bool, None, 3)]
+   or - (bool -> (bool -> bool)): [(bool, None, 3), (bool, None, 3)]
+   xor - (bool -> (bool -> bool)): [(bool, None, 3), (bool, None, 3)]
+   not - (bool -> bool): [(bool, None, 3)]
+#
+ (bool, None, 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, None, 2), (bool, None, 2)]
+   or - (bool -> (bool -> bool)): [(bool, None, 2), (bool, None, 2)]
+   xor - (bool -> (bool -> bool)): [(bool, None, 2), (bool, None, 2)]
+   not - (bool -> bool): [(bool, None, 2)]
+#
+ (bool, None, 0)
+   and - (bool -> (bool -> bool)): [(bool, None, 1), (bool, None, 1)]
+   or - (bool -> (bool -> bool)): [(bool, None, 1), (bool, None, 1)]
+   xor - (bool -> (bool -> bool)): [(bool, None, 1), (bool, None, 1)]
+   not - (bool -> bool): [(bool, None, 1)]

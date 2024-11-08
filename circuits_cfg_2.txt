@@ -1,0 +1,148 @@
+Print a CFG
+start: (bool, None, 0)
+#
+ (bool, (not, 0), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (xor, 1), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (xor, 0), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (or, 1), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (or, 0), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (and, 1), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (and, 0), 3)
+   var0 - bool: []
+   var1 - bool: []
+#
+ (bool, (not, 0), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (xor, 1), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (xor, 0), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (or, 1), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (or, 0), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (and, 1), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (and, 0), 2)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 3), (bool, (and, 1), 3)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 3), (bool, (or, 1), 3)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 3), (bool, (xor, 1), 3)]
+   not - (bool -> bool): [(bool, (not, 0), 3)]
+#
+ (bool, (not, 0), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, (xor, 1), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, (xor, 0), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, (or, 1), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, (or, 0), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, (and, 1), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, (and, 0), 1)
+   var0 - bool: []
+   var1 - bool: []
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 2), (bool, (and, 1), 2)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 2), (bool, (or, 1), 2)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 2), (bool, (xor, 1), 2)]
+   not - (bool -> bool): [(bool, (not, 0), 2)]
+#
+ (bool, None, 0)
+   and - (bool -> (bool -> bool)): [(bool, (and, 0), 1), (bool, (and, 1), 1)]
+   or - (bool -> (bool -> bool)): [(bool, (or, 0), 1), (bool, (or, 1), 1)]
+   xor - (bool -> (bool -> bool)): [(bool, (xor, 0), 1), (bool, (xor, 1), 1)]
+   not - (bool -> bool): [(bool, (not, 0), 1)]
